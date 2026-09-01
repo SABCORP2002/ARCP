@@ -1,0 +1,16 @@
+africanrobotplatform.org {
+  encode zstd gzip
+  reverse_proxy 127.0.0.1:3000
+}
+
+www.africanrobotplatform.org {
+  redir https://africanrobotplatform.org{uri} permanent
+}
+
+admin.africanrobotplatform.org {
+  encode zstd gzip
+  request_body {
+    max_size 16MB
+  }
+  reverse_proxy 127.0.0.1:3001
+}

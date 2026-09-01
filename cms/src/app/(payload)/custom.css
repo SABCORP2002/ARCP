@@ -1,0 +1,12 @@
+:root {
+  --theme-elevation-800: #17221b;
+  --theme-success-500: #22c55e;
+}
+
+.template-default__wrap::before {
+  content: "ARCP — Administration indépendante";
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--theme-elevation-500);
+  font-size: 0.875rem;
+}

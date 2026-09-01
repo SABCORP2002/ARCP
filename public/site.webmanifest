@@ -1,0 +1,17 @@
+{
+  "name": "African Robot Cooperation Platform",
+  "short_name": "ARCP",
+  "description": "A continental cooperation platform for robotics education, research and innovation.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#020D07",
+  "theme_color": "#020D07",
+  "icons": [
+    {
+      "src": "./assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

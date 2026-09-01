@@ -1,0 +1,25 @@
+[Unit]
+Description=ARCP public website
+After=network.target arcp-admin.service
+Wants=arcp-admin.service
+
+[Service]
+Type=simple
+User=arcp
+Group=arcp
+WorkingDirectory=/var/www/arcp
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start -- --hostname 127.0.0.1 --port 3000
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGINT
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/www/arcp/.next
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-padding-top: 7rem;
+  }
+  body {
+    @apply bg-background text-textPrimary font-body overflow-x-hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold text-textPrimary;
+  }
+  a, button, input, select, textarea {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+  button:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+}
+
+.glass {
+  @apply bg-surface/80 backdrop-blur-md border border-border;
+}
+
+.glow-border {
+  @apply border border-transparent hover:border-highlight focus-within:border-highlight transition-colors duration-300;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
