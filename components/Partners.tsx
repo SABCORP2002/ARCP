@@ -40,10 +40,10 @@ export function Partners({ partners = platformPartners, contactEmail = CONTACT_E
     <section id="partners" className="scroll-mt-28 py-16 md:py-24 bg-surface/30 relative overflow-hidden mt-16 md:mt-24">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.08),transparent_60%)]" aria-hidden="true" />
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold mb-4">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold mb-4">
           {t("Our", "Nos")} <span className="text-highlight">{t("Partners", "partenaires")}</span>
         </h2>
-        <p className="text-textSecondary text-lg max-w-2xl mx-auto mb-16 px-4">
+        <p className="text-textSecondary text-lg md:text-xl max-w-3xl mx-auto mb-16 px-4 text-balance leading-relaxed">
           {t(
             "We collaborate with public institutions and private-sector innovators to support robotics education and development.",
             "Nous collaborons avec des institutions publiques et des innovateurs du secteur privé pour soutenir l'éducation et le développement de la robotique.",
