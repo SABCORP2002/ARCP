@@ -17,7 +17,7 @@ interface LayoutProps {
 
 export function Layout({ children, title, description, path = "/", image = "/assets/hero-illlustration.jpg", type = "website", settings }: LayoutProps) {
   const { t, lang } = useLanguage();
-  const defaultTitle = t("AFRICAN ROBOT COOPERATION PLATFORM", "PLATEFORME AFRICAINE DE COOPÉRATION ROBOTIQUE");
+  const defaultTitle = "ARCP";
   const finalTitle = title ? `${title} | ${defaultTitle}` : defaultTitle;
   const finalDescription = description || t("Building Africa's robotics future through cooperation, education and responsible innovation.", "Construire l'avenir de la robotique africaine par la coopération, l'éducation et l'innovation responsable.");
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://africanrobotplatform.org";
@@ -35,7 +35,7 @@ export function Layout({ children, title, description, path = "/", image = "/ass
         <link rel="icon" href={`${basePath}/assets/logo.svg`} type="image/svg+xml" />
         <link rel="manifest" href={`${basePath}/site.webmanifest`} />
         <meta property="og:type" content={type} />
-        <meta property="og:site_name" content="African Robot Cooperation Platform" />
+        <meta property="og:site_name" content="ARCP" />
         <meta property="og:locale" content={lang === "FR" ? "fr_FR" : "en_GB"} />
         <meta property="og:title" content={finalTitle} />
         <meta property="og:description" content={finalDescription} />
