@@ -44,8 +44,8 @@ export function Features() {
     <section id="about" className="scroll-mt-28 py-16 md:py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
         
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.h2 
+        <div className="text-center max-w-5xl mx-auto mb-16">
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -53,12 +53,12 @@ export function Features() {
           >
             {t("About", "À propos de l'")}<span className="text-highlight"> ARCP</span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-textSecondary text-lg"
+            className="text-textSecondary text-lg md:text-xl"
           >
             {t(
               "We are dedicated to building a robust ecosystem for robotics research and industrial application.",
