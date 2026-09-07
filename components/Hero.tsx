@@ -5,55 +5,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { memberNations } from "@/data/members";
 import { defaultSiteSettings, SiteSettings } from "@/data/site";
 
-const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
-  const letters = Array.from(text);
-  
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { 
-        staggerChildren: 0.02, 
-        delayChildren: 0.02 * i + delay 
-      },
-    }),
-  };
-
-  const child = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        damping: 12,
-        stiffness: 200,
-      },
-    },
-    hidden: {
-      opacity: 0,
-      y: 20,
-      transition: {
-        type: "spring" as const,
-        damping: 12,
-        stiffness: 200,
-      },
-    },
-  };
-
-  return (
-    <motion.span
-      style={{ display: "inline", whiteSpace: "pre-wrap" }}
-      variants={container}
-    >
-      {letters.map((letter, index) => (
-        <motion.span variants={child} key={index} style={{ display: "inline-block" }}>
-          {letter === " " ? "\u00A0" : letter}
-        </motion.span>
-      ))}
-    </motion.span>
-  );
-};
-
 export function Hero({ settings = defaultSiteSettings, memberCount = memberNations.length }: { settings?: SiteSettings; memberCount?: number }) {
   const { t, lang } = useLanguage();
 
@@ -76,15 +27,15 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-highlight">
               {t(settings.heroEyebrowEn, settings.heroEyebrowFr)}
             </motion.p>
-            <motion.h1 
+            <motion.h1
               key={lang}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, margin: "-100px" }}
-              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-[1.1] mb-8 md:mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-[1.1] mb-8 md:mb-10 text-balance"
             >
               <span className="bg-clip-text text-transparent bg-gradient-to-b from-textPrimary via-textPrimary to-highlight">
-                <TypingText text={title} />
+                {title}
               </span>
             </motion.h1>
             

@@ -47,19 +47,21 @@ export function Navbar() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 backdrop-blur-md border-b border-border py-3 md:py-4 shadow-sm" : "bg-white py-4 md:py-6"
+          isScrolled ? "bg-white/90 backdrop-blur-md border-b border-border py-3 md:py-4 shadow-sm" : "bg-white py-4 md:py-5"
         }`}
       >
         <div className="container mx-auto px-4 md:px-6 flex items-center">
           {/* Logo - Left */}
           <div className="flex-1 flex justify-start">
-            <Link href="/" className="flex items-center relative w-[136px] sm:w-[160px] md:w-[220px] h-[44px] md:h-[56px] flex-shrink-0">
+            <Link href="/" className="flex items-center relative w-[124px] h-[46px] sm:w-[140px] sm:h-[52px] md:w-[168px] md:h-[62px] flex-shrink-0">
                {/* ICON: logo.svg */}
               <Image
                 src="/assets/logo.svg"
                 alt="African Robot Cooperation Platform"
                 fill
-                className="object-contain"
+                priority
+                sizes="84px"
+                className="object-contain object-left"
               />
             </Link>
           </div>
