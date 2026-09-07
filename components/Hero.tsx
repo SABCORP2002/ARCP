@@ -70,13 +70,13 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
               transition={{ delay: 1, duration: 0.6 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-16 text-sm text-textSecondary font-medium border-t border-border/50 pt-10"
             >
-              <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                <span className="text-3xl md:text-4xl font-black text-textPrimary mb-1">{memberCount}</span>
+              <div className="flex flex-col items-center text-center">
+                <span className="text-4xl md:text-5xl font-black text-textPrimary mb-2">{memberCount}</span>
                 <span className="uppercase tracking-widest text-xs font-bold opacity-60">{t("Ecosystems represented", "ÉCOSYSTÈMES REPRÉSENTÉS")}</span>
               </div>
-              <div className="hidden md:block w-px h-12 bg-border" />
-              <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-                <span className="text-3xl md:text-4xl font-black text-textPrimary mb-1">2024</span>
+              <div className="hidden md:block w-px h-14 bg-border" />
+              <div className="flex flex-col items-center text-center">
+                <span className="text-4xl md:text-5xl font-black text-textPrimary mb-2">2024</span>
                 <span className="uppercase tracking-widest text-xs font-bold opacity-60">{t("Initiative launched", "INITIATIVE LANCÉE")}</span>
               </div>
             </motion.div>
