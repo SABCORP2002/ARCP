@@ -67,12 +67,12 @@ export function Navbar() {
           </div>
 
           {/* Desktop Nav - Center */}
-          <nav aria-label={t("Main navigation", "Navigation principale")} className="hidden lg:flex items-center gap-6 px-4">
+          <nav aria-label={t("Main navigation", "Navigation principale")} className="hidden lg:flex items-center gap-7 xl:gap-8 px-4">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-gray-800 hover:text-highlight transition-colors text-sm font-medium whitespace-nowrap"
+                className="text-gray-800 hover:text-highlight transition-colors text-base font-medium whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -84,7 +84,7 @@ export function Navbar() {
             <button
               onClick={() => setLang(lang === "EN" ? "FR" : "EN")}
               aria-label={t("Switch to French", "Passer en anglais")}
-              className="text-gray-800 hover:text-black text-sm font-medium transition-colors"
+              className="text-gray-800 hover:text-black text-base font-medium transition-colors"
             >
               {lang} / {lang === "EN" ? "FR" : "EN"}
             </button>
