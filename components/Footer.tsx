@@ -9,21 +9,21 @@ export function Footer({ settings = defaultSiteSettings }: { settings?: SiteSett
   return (
     <footer id="contact" className="bg-white border-t border-gray-200 pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12 mb-12 text-center">
 
           {/* Column 1 */}
-          <div>
-            <div className="relative w-[150px] sm:w-[180px] md:w-[200px] h-[48px] md:h-[60px] mb-6">
+          <div className="flex flex-col items-center">
+            <div className="relative w-[180px] md:w-[200px] h-[54px] md:h-[60px] mb-6">
               {/* ICON: logo.svg */}
-              <Image src="/assets/logo.svg" alt="African Robot Cooperation Platform" fill sizes="200px" className="object-contain object-left" />
+              <Image src="/assets/logo.svg" alt="African Robot Cooperation Platform" fill sizes="200px" className="object-contain" />
             </div>
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed max-w-xs">
                 {t("Building Africa's robotics future together through innovation, education and research.", "Construire ensemble l'avenir de la robotique africaine par l'innovation, l'éducation et la recherche.")}
             </p>
           </div>
 
           {/* Column 2 */}
-          <div>
+          <div className="flex flex-col items-center">
             <h4 className="text-gray-900 font-heading font-bold mb-6 text-lg">{t("Quick Links", "Liens Rapides")}</h4>
             <ul className="space-y-3">
               {[
@@ -45,7 +45,7 @@ export function Footer({ settings = defaultSiteSettings }: { settings?: SiteSett
           </div>
 
           {/* Column 3 */}
-          <div>
+          <div className="flex flex-col items-center md:col-span-2 lg:col-span-1">
             <h4 className="text-gray-900 font-heading font-bold mb-6 text-lg">{t("Contact Info", "Coordonnées")}</h4>
             <ul className="space-y-4 text-sm text-gray-600">
               <li>
@@ -69,12 +69,12 @@ export function Footer({ settings = defaultSiteSettings }: { settings?: SiteSett
 
         </div>
 
-        <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row items-center md:items-start justify-between gap-4 text-sm text-gray-500 text-center md:text-left">
-          <p>© {new Date().getFullYear()} AFRICAN ROBOT COOPERATION PLATFORM. {t("All rights reserved.", "Tous droits réservés.")}</p>
-          <div className="flex flex-wrap justify-center md:justify-end gap-4 md:gap-6">
+        <div className="border-t border-gray-200 pt-8 flex flex-col items-center gap-3 text-sm text-gray-500 text-center">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             <Link href="/privacy" className="hover:text-gray-900 transition-colors">{t("Privacy Policy", "Politique de confidentialité")}</Link>
             <Link href="/terms" className="hover:text-gray-900 transition-colors">{t("Terms of Use", "Conditions d'utilisation")}</Link>
           </div>
+          <p>© {new Date().getFullYear()} AFRICAN ROBOT COOPERATION PLATFORM. {t("All rights reserved.", "Tous droits réservés.")}</p>
         </div>
       </div>
     </footer>
