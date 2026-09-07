@@ -5,6 +5,12 @@ import { ownerOnly, ownerOrWebsite } from "../access";
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 
+// On a host with a persistent disk (Render, Fly, a VPS…), point PAYLOAD_MEDIA_DIR
+// at that mount so uploads survive redeploys. Defaults to cms/media for local use.
+const mediaDir = process.env.PAYLOAD_MEDIA_DIR
+  ? path.resolve(process.env.PAYLOAD_MEDIA_DIR)
+  : path.resolve(directory, "../../media");
+
 export const Media: CollectionConfig = {
   slug: "media",
   labels: { singular: "Média", plural: "Médias" },
@@ -16,7 +22,7 @@ export const Media: CollectionConfig = {
     delete: ownerOnly,
   },
   upload: {
-    staticDir: path.resolve(directory, "../../media"),
+    staticDir: mediaDir,
     mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"],
     imageSizes: [
       { name: "card", width: 800, height: 500, position: "centre", formatOptions: { format: "webp", options: { quality: 82 } } },
