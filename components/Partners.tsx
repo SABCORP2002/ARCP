@@ -13,7 +13,7 @@ function PartnerLogo({ partner }: { partner: PlatformPartner }) {
       className="object-contain"
     />
   );
-  const className = `w-32 h-20 sm:w-40 sm:h-24 md:w-52 md:h-28 relative grayscale opacity-70 transition-all duration-300 ${partner.websiteUrl ? "hover:grayscale-0 hover:opacity-100 hover:scale-105" : "cursor-default"}`;
+  const className = `w-32 h-20 sm:w-40 sm:h-24 md:w-52 md:h-28 relative transition-transform duration-300 ${partner.websiteUrl ? "hover:scale-105" : "cursor-default"}`;
 
   if (!partner.websiteUrl) {
     return <div className={className}>{logo}</div>;
