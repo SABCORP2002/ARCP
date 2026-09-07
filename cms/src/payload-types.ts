@@ -310,12 +310,18 @@ export interface ContactRequest {
 export interface MembershipRequest {
   id: number;
   request_status: 'new' | 'processed' | 'rejected' | 'spam';
+  membership_type: 'National ecosystem' | 'Partner organization' | 'Individual supporter';
   full_name: string;
   email: string;
   phone?: string | null;
-  organization: string;
+  applicant_role?: string | null;
   country: string;
-  membership_type: string;
+  organization: string;
+  organization_type?: string | null;
+  org_website?: string | null;
+  community_size?: string | null;
+  focus_area?: string | null;
+  contributions?: string | null;
   interest: string;
   message: string;
   updatedAt: string;
@@ -599,12 +605,18 @@ export interface ContactRequestsSelect<T extends boolean = true> {
  */
 export interface MembershipRequestsSelect<T extends boolean = true> {
   request_status?: T;
+  membership_type?: T;
   full_name?: T;
   email?: T;
   phone?: T;
-  organization?: T;
+  applicant_role?: T;
   country?: T;
-  membership_type?: T;
+  organization?: T;
+  organization_type?: T;
+  org_website?: T;
+  community_size?: T;
+  focus_area?: T;
+  contributions?: T;
   interest?: T;
   message?: T;
   updatedAt?: T;

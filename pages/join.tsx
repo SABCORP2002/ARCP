@@ -167,6 +167,11 @@ export default function JoinPage({ settings }: { settings: SiteSettings }) {
     const interest = (interestBits.join(" · ") || membershipLabel(profile)).slice(0, 300);
     const subject = `${t("New Join Request", "Nouvelle Demande d'Adhésion")}: ${membershipLabel(profile)} — ${form.fullName}`;
 
+    // Discrete columns for the admin, kept alongside the human-readable message.
+    const focusArea = profile === "ecosystem" ? form.role : form.focus;
+    const communitySize = profile === "ecosystem" ? form.scale : "";
+    const contributionList = profile === "individual" ? contributions.join(", ") : "";
+
     try {
       const mode = await deliverForm({
         endpoint: process.env.NEXT_PUBLIC_MEMBERSHIP_FORM_ENDPOINT || "/api/forms/join",
@@ -177,7 +182,13 @@ export default function JoinPage({ settings }: { settings: SiteSettings }) {
           full_name: form.fullName,
           email: form.email,
           phone: form.phone,
+          applicant_role: form.position,
           organization: form.orgName || membershipLabel(profile),
+          organization_type: form.orgType,
+          org_website: form.orgWebsite,
+          community_size: communitySize,
+          focus_area: focusArea,
+          contributions: contributionList,
           country,
           membership_type: membershipLabel(profile),
           interest,
