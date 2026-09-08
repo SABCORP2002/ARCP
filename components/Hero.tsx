@@ -61,7 +61,7 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
     <section className="relative overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_45%_at_50%_0%,rgba(14,165,233,0.12),transparent_70%)]" />
 
-      <div className="container mx-auto px-4 py-16 text-center md:px-6 md:py-24">
+      <div className="container mx-auto px-4 pt-16 pb-12 text-center md:px-6 md:pt-24 md:pb-16">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,32 +104,28 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
           </dl>
         </motion.div>
 
-        {/* Robotics across the continent */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-          className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 md:mt-16 md:grid-cols-5 md:gap-4"
-        >
-          {heroImages.map((src, index) => (
+      </div>
+
+      {/* Robotics across the continent — continuous scrolling strip */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        aria-hidden="true"
+        className="relative overflow-hidden pb-16 md:pb-24 [mask-image:linear-gradient(to_right,transparent,#000_5%,#000_95%,transparent)]"
+      >
+        <div className="hero-marquee-track flex w-max">
+          {[...heroImages, ...heroImages].map((src, index) => (
             <div
-              key={src}
-              className={`group relative aspect-[3/2] overflow-hidden rounded-xl ring-1 ring-border shadow-[0_12px_28px_-16px_rgba(12,74,110,0.3)] ${
-                index === 4 ? "col-span-2 md:col-span-1" : ""
-              }`}
+              key={index}
+              className="relative aspect-[3/2] w-56 shrink-0 overflow-hidden rounded-xl ring-1 ring-border shadow-[0_12px_28px_-16px_rgba(12,74,110,0.3)] mr-3 sm:w-64 md:mr-4 md:w-72"
             >
-              <Image
-                src={`/assets/${src}`}
-                alt={t("African robotics in action", "La robotique africaine en action")}
-                fill
-                sizes="(max-width: 768px) 50vw, 18vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+              <Image src={`/assets/${src}`} alt="" fill sizes="288px" className="object-cover" />
             </div>
           ))}
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

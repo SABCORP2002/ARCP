@@ -46,6 +46,19 @@
   animation: caret-blink 1s step-end infinite;
 }
 
+/* Continuous horizontal scroll for the hero image strip. The track holds two
+   copies of the images, so translating it by -50% loops seamlessly. */
+@keyframes hero-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.hero-marquee-track {
+  animation: hero-marquee 30s linear infinite;
+}
+.hero-marquee-track:hover {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
