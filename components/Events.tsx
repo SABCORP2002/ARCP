@@ -35,9 +35,9 @@ const InteractiveProjector = () => {
 
       draw() {
         if (!ctx) return;
-        ctx.fillStyle = "rgba(34, 197, 94, 0.9)";
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "rgba(34, 197, 94, 0.8)";
+        ctx.fillStyle = "rgba(2, 132, 199, 0.55)";
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "rgba(2, 132, 199, 0.4)";
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.closePath();
@@ -123,7 +123,7 @@ const InteractiveProjector = () => {
 
           if (distance < 150) { // Longer connection lines
             const opacity = 1 - distance / 150;
-            ctx.strokeStyle = `rgba(34, 197, 94, ${opacity * 0.8})`; // Highly visible lines
+            ctx.strokeStyle = `rgba(2, 132, 199, ${opacity * 0.4})`;
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.moveTo(particles[a].x, particles[a].y);
@@ -187,7 +187,7 @@ const InteractiveProjector = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 w-full h-full pointer-events-auto opacity-100" />;
+  return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 w-full h-full pointer-events-auto opacity-70" />;
 };
 
 export function Events({ events = platformEvents }: { events?: PlatformEvent[] }) {
@@ -225,7 +225,7 @@ export function Events({ events = platformEvents }: { events?: PlatformEvent[] }
               <div className="flex-grow">
                 <div className="flex flex-col mb-6">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <time dateTime={event.startsAt} className="text-cta font-bold text-lg">{t(event.dateEn, event.dateFr)}</time>
+                    <time dateTime={event.startsAt} className="text-highlight font-bold text-lg">{t(event.dateEn, event.dateFr)}</time>
                     <span className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-bold uppercase tracking-wider text-textSecondary">
                       {event.isPast ? t("Past event", "Événement passé") : t("Upcoming event", "Événement à venir")}
                     </span>
@@ -243,7 +243,7 @@ export function Events({ events = platformEvents }: { events?: PlatformEvent[] }
                 href={event.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-surface border border-border hover:border-cta hover:bg-cta/10 text-white py-4 rounded-xl font-bold transition-all mt-auto group-hover:shadow-[0_0_15px_rgba(34,197,94,0.2)]"
+                className="block w-full text-center bg-surface border border-border text-textPrimary hover:border-highlight hover:text-highlight hover:bg-highlight/5 py-4 rounded-xl font-bold transition-all mt-auto"
               >
                 {t("View official event page", "Voir la page officielle")}
               </a>

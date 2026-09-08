@@ -15,15 +15,8 @@ export function Members({ members = memberNations }: { members?: MemberNation[] 
   });
 
   return (
-    <section id="members" className="scroll-mt-28 py-16 md:py-24 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <Image src="/assets/member-nations.jpg" alt="" fill className="object-cover" />
-        <div className="absolute inset-0 bg-background/85" />
-      </div>
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-highlight/5 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" />
-
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
+    <section id="members" className="scroll-mt-28 bg-background py-16 md:py-24">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -48,7 +41,7 @@ export function Members({ members = memberNations }: { members?: MemberNation[] 
         </div>
 
         {/* Directory toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-white/10 pb-4 mb-6 md:mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-border pb-4 mb-6 md:mb-8">
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-textSecondary">
             {t("Represented countries", "Pays représentés")}
             <span className="text-textSecondary/50"> · {members.length}</span>
@@ -89,9 +82,9 @@ function MemberCard({ member, index }: { member: MemberNation; index: number }) 
     >
       <Link
         href={`/members/${member.slug}`}
-        className="group flex h-full flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition-all hover:-translate-y-1 hover:border-highlight/40 hover:bg-white/[0.06] focus-visible:-translate-y-1 focus-visible:border-highlight/60 focus-visible:outline-none"
+        className="group flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-3 shadow-[0_1px_3px_rgba(15,23,42,0.05)] transition-all hover:-translate-y-1 hover:border-highlight/40 hover:shadow-[0_12px_26px_-12px_rgba(12,74,110,0.18)] focus-visible:-translate-y-1 focus-visible:border-highlight/60 focus-visible:outline-none"
       >
-        <div className="relative aspect-[3/2] overflow-hidden rounded-md bg-white/5 ring-1 ring-white/10">
+        <div className="relative aspect-[3/2] overflow-hidden rounded-md bg-surfaceAlt ring-1 ring-border">
           <Image
             src={`https://flagcdn.com/w320/${member.code}.png`}
             alt={t(`Flag of ${member.nameEn}`, `Drapeau : ${member.nameFr}`)}

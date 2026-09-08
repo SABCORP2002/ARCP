@@ -64,31 +64,31 @@ export default function ContactPage({ settings }: { settings: SiteSettings }) {
             </div>
             <label className="grid gap-2 font-semibold">
               {t("Full name", "Nom complet")}
-              <input name="full_name" type="text" autoComplete="name" required className="bg-surface/50 border border-border rounded-xl px-4 py-3" />
+              <input name="full_name" type="text" autoComplete="name" required className="bg-surfaceAlt border border-border rounded-xl px-4 py-3" />
             </label>
             <div className="grid sm:grid-cols-2 gap-5">
               <label className="grid gap-2 font-semibold">
                 {t("Email address", "Adresse email")}
-                <input name="email" type="email" autoComplete="email" required className="bg-surface/50 border border-border rounded-xl px-4 py-3" />
+                <input name="email" type="email" autoComplete="email" required className="bg-surfaceAlt border border-border rounded-xl px-4 py-3" />
               </label>
               <label className="grid gap-2 font-semibold">
                 {t("Phone (optional)", "Téléphone (facultatif)")}
-                <input name="phone" type="tel" autoComplete="tel" className="bg-surface/50 border border-border rounded-xl px-4 py-3" />
+                <input name="phone" type="tel" autoComplete="tel" className="bg-surfaceAlt border border-border rounded-xl px-4 py-3" />
               </label>
             </div>
             <label className="grid gap-2 font-semibold">
               {t("Subject", "Objet")}
-              <input name="subject" type="text" required className="bg-surface/50 border border-border rounded-xl px-4 py-3" />
+              <input name="subject" type="text" required className="bg-surfaceAlt border border-border rounded-xl px-4 py-3" />
             </label>
             <label className="grid gap-2 font-semibold">
               {t("Message", "Message")}
-              <textarea name="message" rows={6} required className="bg-surface/50 border border-border rounded-xl px-4 py-3 resize-y" />
+              <textarea name="message" rows={6} required className="bg-surfaceAlt border border-border rounded-xl px-4 py-3 resize-y" />
             </label>
             <label className="flex items-start gap-3 text-sm text-textSecondary">
               <input name="consent" type="checkbox" value="1" required className="mt-1" />
               <span>{t("I agree that my information may be processed to answer this request.", "J'accepte que mes informations soient traitées afin de répondre à cette demande.")} <Link href="/privacy" className="text-highlight hover:underline">{t("Privacy policy", "Politique de confidentialité")}</Link>.</span>
             </label>
-            <button type="submit" disabled={status === "sending"} className="bg-cta hover:bg-ctaHover text-background font-bold px-7 py-4 rounded-full transition-colors">
+            <button type="submit" disabled={status === "sending"} className="bg-cta hover:bg-ctaHover text-white font-bold px-7 py-4 rounded-full transition-colors">
               {status === "sending" ? t("Sending…", "Envoi…") : t("Send message", "Envoyer le message")}
             </button>
             <p id="contact-status" role="status" className="text-sm text-textSecondary min-h-5">

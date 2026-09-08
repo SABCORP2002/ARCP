@@ -27,13 +27,10 @@ export function Newsletter({ recipient = CONTACT_EMAIL }: { recipient?: string }
   };
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden bg-highlight/5 border-b border-border">
+    <section className="py-16 md:py-24 relative overflow-hidden bg-surfaceAlt border-b border-border">
       
-       {/* Decorative Gradient */}
-       <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background pointer-events-none z-0" />
-
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="glass p-6 sm:p-8 md:p-16 rounded-[2rem] md:rounded-[3rem] border-highlight/30 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12 shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+        <div className="glass p-6 sm:p-8 md:p-16 rounded-[2rem] md:rounded-[3rem] border-highlight/25 flex flex-col lg:flex-row items-center justify-between gap-10 md:gap-12 shadow-[0_20px_50px_-24px_rgba(12,74,110,0.25)]">
           
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-heading font-black mb-4 leading-tight text-textPrimary">
@@ -60,13 +57,13 @@ export function Newsletter({ recipient = CONTACT_EMAIL }: { recipient?: string }
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={t("Enter your email address", "Entrez votre adresse email")} 
-                className="bg-background/80 border border-border text-textPrimary px-6 py-4 rounded-full flex-grow focus:outline-none focus:border-highlight transition-colors"
+                className="bg-surfaceAlt border border-border text-textPrimary px-6 py-4 rounded-full flex-grow focus:outline-none focus:border-highlight transition-colors"
                 required
               />
               <button 
                 type="submit"
                 disabled={status === "sending"}
-                className="bg-cta hover:bg-ctaHover text-background font-bold px-8 py-4 rounded-full transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                className="bg-cta hover:bg-ctaHover text-white font-bold px-8 py-4 rounded-full transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
               >
                 {status === "sending" ? t("Sending…", "Envoi…") : t("Subscribe", "S'abonner")}
               </button>

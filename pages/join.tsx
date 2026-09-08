@@ -13,7 +13,7 @@ import { africanCountries } from "@/data/africanCountries";
 type Profile = "ecosystem" | "partner" | "individual";
 
 const fieldClass =
-  "w-full bg-surface/50 border border-border rounded-2xl px-5 py-3.5 text-textPrimary placeholder:text-textSecondary/60 focus:outline-none focus:border-highlight focus:ring-2 focus:ring-highlight/25 transition-colors";
+  "w-full bg-surfaceAlt border border-border rounded-2xl px-5 py-3.5 text-textPrimary placeholder:text-textSecondary/60 focus:outline-none focus:border-highlight focus:ring-2 focus:ring-highlight/25 transition-colors";
 const selectClass = `${fieldClass} appearance-none cursor-pointer pr-12`;
 const labelClass = "block text-xs font-bold text-textPrimary mb-2 ml-1 uppercase tracking-wider";
 
@@ -343,7 +343,7 @@ export default function JoinPage({ settings }: { settings: SiteSettings }) {
                         className={`cursor-pointer rounded-2xl border p-5 transition-all ${
                           profile === option.id
                             ? "border-highlight bg-highlight/10 ring-2 ring-highlight/30"
-                            : "border-border bg-surface/40 hover:border-highlight/40"
+                            : "border-border bg-surfaceAlt hover:border-highlight/40"
                         }`}
                       >
                         <input
@@ -613,7 +613,7 @@ export default function JoinPage({ settings }: { settings: SiteSettings }) {
                                   className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
                                     active
                                       ? "border-highlight bg-highlight/15 text-textPrimary"
-                                      : "border-border bg-surface/40 text-textSecondary hover:border-highlight/40"
+                                      : "border-border bg-surfaceAlt text-textSecondary hover:border-highlight/40"
                                   }`}
                                 >
                                   {option}
@@ -682,7 +682,7 @@ export default function JoinPage({ settings }: { settings: SiteSettings }) {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-cta hover:bg-ctaHover text-background font-black text-lg md:text-xl py-4 md:py-6 rounded-2xl transition-all shadow-[0_0_30px_rgba(34,197,94,0.3)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
+                        className="w-full bg-cta hover:bg-ctaHover text-white font-black text-lg md:text-xl py-4 md:py-6 rounded-2xl transition-all shadow-[0_16px_36px_-14px_rgba(12,74,110,0.4)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
                       >
                         {isSubmitting ? t("Sending…", "Envoi…") : t("Submit application", "Envoyer la candidature")}
                       </button>

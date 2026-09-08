@@ -48,14 +48,14 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
   return (
     <Layout title={`${name} | ARCP`} description={description} path={`/members/${member.slug}`} image="/assets/member-nations.jpg" settings={settings}>
       <section className="relative pt-24 pb-20 border-b border-border overflow-hidden">
-        <div className="absolute inset-0 bg-surface/30 -z-10" />
+        <div className="absolute inset-0 bg-surfaceAlt -z-10" />
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 -z-10 pointer-events-none" aria-hidden="true">
           <Image src="/assets/member-page-illustration.svg" alt="" fill className="object-cover" />
         </div>
 
         <div className="container mx-auto px-4 md:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row items-start md:items-center gap-8">
-            <div className="relative w-40 h-24 md:w-64 md:h-40 rounded-xl overflow-hidden shadow-2xl border-4 border-background">
+            <div className="relative w-40 h-24 md:w-64 md:h-40 rounded-xl overflow-hidden shadow-lg ring-1 ring-border border-4 border-surface">
               <Image
                 src={`https://flagcdn.com/w320/${member.code}.png`}
                 alt={t(`Flag of ${member.nameEn}`, `Drapeau du pays : ${member.nameFr}`)}
@@ -85,7 +85,7 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
               </h2>
 
               {isCameroon ? (
-                <div className="prose prose-invert prose-lg max-w-none text-textSecondary mb-12">
+                <div className="prose prose-lg max-w-none text-textSecondary mb-12 prose-headings:font-heading prose-headings:text-textPrimary prose-a:text-highlight">
                   <p>
                     {t(
                       member.aboutEn || "Founded in 2018, the Cameroon Robotics Association promotes robotics and innovation by connecting academia, industry and young technical talent.",
@@ -142,11 +142,11 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
               </div>
 
               {isCameroon ? (
-                <a href={member.websiteUrl || "https://cameroonrobotics.org"} target="_blank" rel="noopener noreferrer" className="w-full bg-cta hover:bg-ctaHover text-background py-5 rounded-2xl font-bold transition-all shadow-lg flex items-center justify-center">
+                <a href={member.websiteUrl || "https://cameroonrobotics.org"} target="_blank" rel="noopener noreferrer" className="w-full bg-cta hover:bg-ctaHover text-white py-5 rounded-2xl font-bold transition-all shadow-lg flex items-center justify-center">
                   {t("Visit the Cameroon platform", "Visiter la plateforme du Cameroun")}
                 </a>
               ) : (
-                <div className="w-full bg-surface text-textSecondary py-5 rounded-2xl font-bold border border-border text-center">
+                <div className="w-full bg-surfaceAlt text-textSecondary py-5 rounded-2xl font-bold border border-border text-center">
                   {t("Official link pending validation", "Lien officiel en attente de validation")}
                 </div>
               )}
@@ -155,7 +155,7 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-surface/20 border-t border-border">
+      <section className="py-16 md:py-24 bg-surfaceAlt border-t border-border">
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl font-heading font-bold mb-12 text-center text-textPrimary">{t("Verified associations", "Associations vérifiées")}</h2>
 
@@ -163,7 +163,7 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {associations.map((association) => (
                 <a key={association.link} href={association.link} target="_blank" rel="noopener noreferrer" className="glass p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-2 transition-transform glow-border group">
-                  <div className="relative w-16 h-16 shrink-0 bg-background rounded-xl border border-border">
+                  <div className="relative w-16 h-16 shrink-0 bg-surfaceAlt rounded-xl border border-border">
                     <Image src={association.logo} alt="" fill sizes="64px" className="object-contain p-2" />
                   </div>
                   <div>

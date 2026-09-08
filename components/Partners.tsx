@@ -37,8 +37,8 @@ export function Partners({ partners = platformPartners, contactEmail = CONTACT_E
   const subject = encodeURIComponent(t("Partnership request — ARCP", "Demande de partenariat — PACR"));
 
   return (
-    <section id="partners" className="scroll-mt-28 py-16 md:py-24 bg-surface/30 relative overflow-hidden mt-16 md:mt-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.08),transparent_60%)]" aria-hidden="true" />
+    <section id="partners" className="scroll-mt-28 py-16 md:py-24 bg-surfaceAlt relative overflow-hidden mt-16 md:mt-24">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08),transparent_60%)]" aria-hidden="true" />
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold mb-4">
           {t("Our", "Nos")} <span className="text-highlight">{t("Partners", "partenaires")}</span>
@@ -56,7 +56,7 @@ export function Partners({ partners = platformPartners, contactEmail = CONTACT_E
 
         <a
           href={`mailto:${contactEmail}?subject=${subject}`}
-          className="inline-flex bg-transparent border-2 border-cta text-cta hover:bg-cta hover:text-background px-8 py-3 rounded-full font-bold transition-all hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+          className="inline-flex bg-transparent border-2 border-cta text-cta hover:bg-cta hover:text-white px-8 py-3 rounded-full font-bold transition-all hover:shadow-md"
         >
           {t("Become a partner", "Devenir partenaire")}
         </a>

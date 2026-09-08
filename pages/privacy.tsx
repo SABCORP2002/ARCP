@@ -11,7 +11,7 @@ export default function PrivacyPage({ settings }: { settings: SiteSettings }) {
       <article className="container mx-auto max-w-3xl px-4 py-16 md:py-24">
         <h1 className="text-4xl md:text-5xl font-black mb-4">{t("Privacy Policy", "Politique de confidentialité")}</h1>
         <p className="text-textSecondary mb-10">{t("Last updated: 26 August 2026", "Dernière mise à jour : 26 août 2026")}</p>
-        <div className="prose prose-invert prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none prose-headings:font-heading prose-a:text-highlight">
           <h2>{t("Information we collect", "Informations collectées")}</h2>
           <p>{t("Membership and contact forms may collect your name, email address, organization, country and message. The newsletter form collects your email address.", "Les formulaires d'adhésion et de contact peuvent collecter votre nom, votre adresse email, votre organisation, votre pays et votre message. Le formulaire de newsletter collecte votre adresse email.")}</p>
           <h2>{t("How information is used", "Utilisation des informations")}</h2>

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -7,49 +6,53 @@ export function Features() {
 
   const featuresData = [
     {
-      icon: "history-icon.jpg",
       title: t("History", "Histoire"),
       description: t(
         "Founded in 2024, ARCP emerged from a collective desire to unite fragmented continental robotics initiatives into a shared platform.",
-        "Fondée en 2024, l'ARCP est née d'un désir collectif d'unir les initiatives robotiques continentales au sein d'une plateforme commune."
+        "Fondée en 2024, l'ARCP est née d'un désir collectif d'unir les initiatives robotiques continentales au sein d'une plateforme commune.",
       ),
     },
     {
-      icon: "mission-icon.jpg",
       title: t("Mission", "Mission"),
       description: t(
         "To accelerate the adoption, development, and contextualization of robotic technologies across all 54 African nations.",
-        "Accélérer l'adoption, le développement et la contextualisation des technologies robotiques dans les 54 nations africaines."
+        "Accélérer l'adoption, le développement et la contextualisation des technologies robotiques dans les 54 nations africaines.",
       ),
     },
     {
-      icon: "vision-icon.jpg",
       title: t("Vision", "Vision"),
       description: t(
         "An Africa that is not merely a consumer of global automation, but a leading pioneer in responsible robotics innovation.",
-        "Une Afrique qui n'est pas seulement consommatrice d'automatisation mondiale, mais pionnière de l'innovation robotique responsable."
+        "Une Afrique qui n'est pas seulement consommatrice d'automatisation mondiale, mais pionnière de l'innovation robotique responsable.",
       ),
     },
     {
-      icon: "governance-icon.jpg",
       title: t("Governance", "Gouvernance"),
       description: t(
         "Structured collaboratively with representation from key academic, industrial, and governmental bodies across our member states.",
-        "Structurée de manière collaborative avec des représentants d'organismes académiques, industriels et gouvernementaux de nos États membres."
+        "Structurée de manière collaborative avec des représentants d'organismes académiques, industriels et gouvernementaux de nos États membres.",
       ),
     },
   ];
 
   return (
-    <section id="about" className="scroll-mt-28 py-16 md:py-24 relative">
+    <section id="about" className="scroll-mt-28 bg-surface py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
-        
-        <div className="text-center max-w-5xl mx-auto mb-16">
+        <div className="mx-auto mb-14 max-w-2xl text-center md:mb-16">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-highlight"
+          >
+            {t("About us", "À propos")}
+          </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-heading font-bold mb-4"
+            transition={{ delay: 0.05 }}
+            className="font-heading text-3xl font-bold md:text-5xl"
           >
             {t("About", "À propos de l'")}<span className="text-highlight"> ARCP</span>
           </motion.h2>
@@ -58,54 +61,33 @@ export function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-textSecondary text-lg md:text-xl"
+            className="mt-4 text-lg leading-relaxed text-textSecondary md:text-xl"
           >
             {t(
               "We are dedicated to building a robust ecosystem for robotics research and industrial application.",
-              "Nous nous consacrons à la construction d'un écosystème robuste pour la recherche et l'application industrielle de la robotique."
+              "Nous nous consacrons à la construction d'un écosystème robuste pour la recherche et l'application industrielle de la robotique.",
             )}
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2">
           {featuresData.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              whileHover={{ y: -8 }}
-              className="glass p-6 md:p-10 rounded-[2rem] glow-border group flex flex-col items-start shadow-xl relative overflow-hidden"
+              transition={{ delay: index * 0.06, duration: 0.4 }}
+              className="rounded-2xl border border-border bg-surface p-7 shadow-[0_1px_3px_rgba(15,23,42,0.05)] transition-all hover:border-highlight/40 hover:shadow-[0_14px_34px_-14px_rgba(12,74,110,0.2)] md:p-9"
             >
-              {/* Background Image with low opacity */}
-              <div className="absolute inset-0 z-0 opacity-25 group-hover:opacity-40 transition-opacity duration-500">
-                <Image 
-                  src={`/assets/${feature.icon}`} 
-                  alt="" 
-                  fill 
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover" 
-                />
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-highlight/10 text-highlight">
+                <span className="h-2.5 w-2.5 rounded-full bg-highlight" />
               </div>
-
-              {/* Gradient Overlay for better contrast */}
-              <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-transparent to-transparent z-[1]" />
-
-              <div className="relative z-10 w-full">
-                <div className="w-12 h-12 rounded-xl bg-surface border border-border flex items-center justify-center mb-6 group-hover:bg-highlight/10 transition-colors">
-                  {/* Optional: A small accent or just the space */}
-                  <div className="w-2 h-2 rounded-full bg-highlight" />
-                </div>
-                <h3 className="text-2xl md:text-3xl font-heading font-black mb-4 group-hover:text-highlight transition-colors">{feature.title}</h3>
-                <p className="text-textSecondary leading-relaxed text-lg">
-                  {feature.description}
-                </p>
-              </div>
+              <h3 className="font-heading text-xl font-bold text-textPrimary md:text-2xl">{feature.title}</h3>
+              <p className="mt-3 text-lg leading-relaxed text-textSecondary">{feature.description}</p>
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );

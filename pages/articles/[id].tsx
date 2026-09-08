@@ -98,7 +98,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.3 }}
-            className="prose prose-invert prose-base md:prose-lg lg:prose-xl max-w-none text-textSecondary font-body leading-relaxed"
+            className="prose prose-base md:prose-lg lg:prose-xl max-w-none text-textSecondary font-body leading-relaxed prose-headings:font-heading prose-headings:text-textPrimary prose-a:text-highlight prose-strong:text-textPrimary"
           >
              <p className="mb-6">{currentContent}</p>
 
@@ -107,7 +107,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
                 href={article.sourceUrl} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="inline-block bg-primary hover:bg-highlight text-white font-bold py-3 px-8 rounded-full transition-colors"
+                className="inline-block bg-cta hover:bg-ctaHover text-white font-bold py-3 px-8 rounded-full transition-colors"
               >
                 {t("Read full article", "Lire l'article complet")}
               </a>
@@ -115,7 +115,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
 
             <hr className="border-border my-12" />
 
-            <div className="bg-surface/50 p-6 md:p-8 rounded-2xl glass glow-border mt-12 flex flex-col md:flex-row items-center gap-6 md:gap-8 justify-between">
+            <div className="glass p-6 md:p-8 rounded-2xl glow-border mt-12 flex flex-col md:flex-row items-center gap-6 md:gap-8 justify-between">
               <div>
                 <h4 className="text-xl font-heading font-bold text-textPrimary mb-2">{t("Share this insight", "Partager cet aperçu")}</h4>
                 <p className="text-sm text-textSecondary">{t("Help spread word about African robotics innovation.", "Aidez à faire connaître l'innovation robotique en Afrique.")}</p>
@@ -132,7 +132,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
                      type="button"
                      onClick={() => shareArticle(social.id as "linkedin" | "twitter" | "facebook")}
                      aria-label={t(`Share on ${social.label}`, `Partager sur ${social.label}`)}
-                     className="w-12 h-12 rounded-full bg-background flex items-center justify-center hover:bg-highlight hover:scale-110 transition-all border border-border group"
+                     className="w-12 h-12 rounded-full bg-surfaceAlt flex items-center justify-center hover:border-highlight hover:bg-highlight/10 hover:scale-110 transition-all border border-border group"
                    >
                       <Image src={social.icon} alt={social.id} width={20} height={20} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                    </button>

@@ -30,7 +30,7 @@ export function ArticlesGrid({ articles = articlesData }: { articles?: Article[]
     : articles.filter(a => a.category === activeCategory);
 
   return (
-    <section id="articles" className="scroll-mt-28 py-16 md:py-24 bg-surface/30 border-y border-border">
+    <section id="articles" className="scroll-mt-28 py-16 md:py-24 bg-surfaceAlt border-y border-border">
       <div className="container mx-auto px-4 md:px-6">
         
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
@@ -48,8 +48,8 @@ export function ArticlesGrid({ articles = articlesData }: { articles?: Article[]
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all
                   ${activeCategory === cat.key 
-                    ? "bg-cta text-background scale-105" 
-                    : "bg-surface text-textSecondary hover:bg-highlight/20 hover:text-white"
+                    ? "bg-cta text-white" 
+                    : "bg-surface border border-border text-textSecondary hover:border-highlight hover:text-highlight"
                   }
                 `}
               >
@@ -72,7 +72,7 @@ export function ArticlesGrid({ articles = articlesData }: { articles?: Article[]
               >
                 <article className="glass glow-border rounded-2xl overflow-hidden hover:-translate-y-2 transition-transform h-full flex flex-col group">
                   
-                  <div className="relative h-48 w-full bg-background overflow-hidden">
+                  <div className="relative h-48 w-full bg-surfaceAlt overflow-hidden">
                     {/* Replace with actual article image */}
                     <Image 
                       src={contentImageSrc(article.image, "articles")}
@@ -81,7 +81,7 @@ export function ArticlesGrid({ articles = articlesData }: { articles?: Article[]
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover group-hover:scale-110 transition-transform duration-500" 
                     />
-                    <div className="absolute top-4 left-4 bg-background/80 backdrop-blur text-highlight text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-highlight/20">
+                    <div className="absolute top-4 left-4 bg-surface/90 backdrop-blur text-highlight text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-border">
                       {t(articleCategoryLabels[article.category].en, articleCategoryLabels[article.category].fr)}
                     </div>
                   </div>

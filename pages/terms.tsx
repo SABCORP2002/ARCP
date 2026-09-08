@@ -11,7 +11,7 @@ export default function TermsPage({ settings }: { settings: SiteSettings }) {
       <article className="container mx-auto max-w-3xl px-4 py-16 md:py-24">
         <h1 className="text-4xl md:text-5xl font-black mb-4">{t("Terms of Use", "Conditions d'utilisation")}</h1>
         <p className="text-textSecondary mb-10">{t("Last updated: 26 August 2026", "Dernière mise à jour : 26 août 2026")}</p>
-        <div className="prose prose-invert prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none prose-headings:font-heading prose-a:text-highlight">
           <h2>{t("Purpose", "Objet")}</h2>
           <p>{t("This website presents the African Robot Cooperation Platform, its verified activities and opportunities to collaborate.", "Ce site présente la Plateforme Africaine de Coopération Robotique, ses activités vérifiées et les possibilités de collaboration.")}</p>
           <h2>{t("Accuracy and membership status", "Exactitude et statut des membres")}</h2>

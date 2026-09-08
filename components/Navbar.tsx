@@ -47,7 +47,7 @@ export function Navbar() {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 backdrop-blur-md border-b border-border py-3 md:py-4 shadow-sm" : "bg-white py-4 md:py-5"
+          isScrolled ? "bg-surface/90 backdrop-blur-md border-b border-border py-3 md:py-4 shadow-sm" : "bg-surface py-4 md:py-5"
         }`}
       >
         <div className="container mx-auto px-4 md:px-6 flex items-center">
@@ -72,7 +72,7 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-gray-800 hover:text-highlight transition-colors text-base font-medium whitespace-nowrap"
+                className="text-textSecondary hover:text-highlight transition-colors text-base font-medium whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -84,13 +84,13 @@ export function Navbar() {
             <button
               onClick={() => setLang(lang === "EN" ? "FR" : "EN")}
               aria-label={t("Switch to French", "Passer en anglais")}
-              className="text-gray-800 hover:text-black text-base font-medium transition-colors"
+              className="text-textSecondary hover:text-textPrimary text-base font-medium transition-colors"
             >
               {lang} / {lang === "EN" ? "FR" : "EN"}
             </button>
             <Link 
               href="/join"
-              className="bg-cta hover:bg-ctaHover text-background px-6 py-2 rounded-full font-semibold transition-colors"
+              className="bg-cta hover:bg-ctaHover text-white px-6 py-2 rounded-full font-semibold transition-colors"
             >
               {t("Join Us", "Nous Rejoindre")}
             </Link>
@@ -99,7 +99,7 @@ export function Navbar() {
           {/* Mobile Toggle */}
           <div className="lg:hidden flex-1 flex justify-end">
             <button
-              className="p-2 text-black"
+              className="p-2 text-textPrimary"
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label={t("Open menu", "Ouvrir le menu")}
               aria-expanded={isMobileMenuOpen}
@@ -124,11 +124,11 @@ export function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[60] bg-white/95 backdrop-blur-lg flex flex-col justify-center items-center p-6"
+            className="fixed inset-0 z-[60] bg-surface/95 backdrop-blur-lg flex flex-col justify-center items-center p-6"
           >
             <button
               ref={closeButtonRef}
-              className="absolute top-6 right-6 p-2 text-black text-2xl"
+              className="absolute top-6 right-6 p-2 text-textPrimary text-2xl"
               onClick={() => setIsMobileMenuOpen(false)}
               aria-label={t("Close menu", "Fermer le menu")}
             >
@@ -140,7 +140,7 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="text-2xl font-heading font-bold text-gray-900 hover:text-highlight transition-colors pb-4 w-full text-center border-b border-gray-100 last:border-0"
+                  className="text-2xl font-heading font-bold text-textPrimary hover:text-highlight transition-colors pb-4 w-full text-center border-b border-border last:border-0"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -152,13 +152,13 @@ export function Navbar() {
               <button
                 onClick={() => setLang(lang === "EN" ? "FR" : "EN")}
                 aria-label={t("Switch to French", "Passer en anglais")}
-                className="text-gray-700 text-lg font-medium"
+                className="text-textSecondary text-lg font-medium"
               >
                 {t("Language", "Langue")} : {lang}
               </button>
               <Link 
                 href="/join"
-                className="w-full text-center bg-cta hover:bg-ctaHover text-background px-6 py-3 rounded-full font-semibold transition-colors mt-4"
+                className="w-full text-center bg-cta hover:bg-ctaHover text-white px-6 py-3 rounded-full font-semibold transition-colors mt-4"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {t("Join Us", "Nous Rejoindre")}
