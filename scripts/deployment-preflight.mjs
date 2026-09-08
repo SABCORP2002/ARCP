@@ -89,9 +89,20 @@ if (!useExamples && publicUrl) {
 if (!useExamples && publicUrl && cmsPublicUrl && publicUrl.origin === cmsPublicUrl.origin) {
   problems.push("The public site and administration must use distinct origins");
 }
-if (!(cmsEnvironment.DATABASE_URL || "").startsWith("file:")) problems.push("DATABASE_URL must be a SQLite file: URL");
+const databaseUrl = cmsEnvironment.DATABASE_URL || "";
+const fileDatabase = databaseUrl.startsWith("file:");
+const remoteDatabase = databaseUrl.startsWith("libsql:") || databaseUrl.startsWith("https:");
+if (!fileDatabase && !remoteDatabase) {
+  problems.push("DATABASE_URL must be a SQLite file: URL or a hosted libsql:// URL");
+}
+if (remoteDatabase && !cmsEnvironment.DATABASE_AUTH_TOKEN) {
+  problems.push("DATABASE_AUTH_TOKEN is required when DATABASE_URL is a hosted libsql:// URL");
+}
 
-for (const relativeDirectory of ["cms/data", "cms/media"]) {
+const requiredDirectories = [];
+if (fileDatabase) requiredDirectories.push("cms/data");
+if (!cmsEnvironment.S3_BUCKET && !cmsEnvironment.PAYLOAD_MEDIA_DIR) requiredDirectories.push("cms/media");
+for (const relativeDirectory of requiredDirectories) {
   const directory = path.join(root, relativeDirectory);
   try {
     fs.accessSync(directory, fs.constants.R_OK | fs.constants.W_OK);

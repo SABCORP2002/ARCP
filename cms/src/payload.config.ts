@@ -1,7 +1,9 @@
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { s3Storage } from "@payloadcms/storage-s3";
 import path from "node:path";
 import { buildConfig } from "payload";
+import type { Plugin } from "payload";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { Users } from "./collections/Users";
@@ -20,6 +22,32 @@ if (!secret || secret.startsWith("replace-with")) {
   throw new Error("PAYLOAD_SECRET must contain a strong private value.");
 }
 
+// SQLite: a local file for development, or a hosted libSQL/Turso URL in
+// production. A local file also gets WAL mode; a remote database does not.
+const databaseUrl = process.env.DATABASE_URL || "file:./data/arcp.db";
+const isFileDatabase = databaseUrl.startsWith("file:");
+
+// Uploads: the local disk by default, or an S3-compatible bucket (Cloudflare
+// R2, Backblaze B2, AWS S3…) when S3_BUCKET is set. Files are still streamed
+// through Payload's own API, so the bucket stays private. The plugin is always
+// registered (so the import map is stable) but only active when configured.
+const plugins: Plugin[] = [
+  s3Storage({
+    enabled: Boolean(process.env.S3_BUCKET),
+    collections: { media: true },
+    bucket: process.env.S3_BUCKET || "",
+    config: {
+      endpoint: process.env.S3_ENDPOINT,
+      region: process.env.S3_REGION || "auto",
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || "",
+      },
+    },
+  }),
+];
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -36,10 +64,14 @@ export default buildConfig({
   graphQL: { disable: true },
   telemetry: false,
   maxDepth: 2,
+  plugins,
   db: sqliteAdapter({
-    client: { url: process.env.DATABASE_URL || "file:./data/arcp.db" },
+    client: {
+      url: databaseUrl,
+      ...(process.env.DATABASE_AUTH_TOKEN ? { authToken: process.env.DATABASE_AUTH_TOKEN } : {}),
+    },
     prodMigrations: migrations,
-    wal: true,
+    wal: isFileDatabase,
     busyTimeout: 5000,
     autoIncrement: true,
   }),
