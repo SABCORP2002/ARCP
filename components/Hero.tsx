@@ -67,8 +67,8 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
           and a spotlight that keeps the headline crisp. */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
         <Image src="/assets/Afrique.jpg" alt="" fill priority sizes="100vw" className="object-cover object-top" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/42 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(62%_52%_at_50%_24%,#F6F9FC_0%,rgba(246,249,252,0.35)_55%,transparent_78%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/25 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(58%_48%_at_50%_24%,rgba(246,249,252,0.9)_0%,rgba(246,249,252,0.2)_52%,transparent_76%)]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 pt-16 pb-12 text-center md:px-6 md:pt-24 md:pb-16">
