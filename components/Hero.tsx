@@ -11,21 +11,25 @@ const heroImages = ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg"];
 /** Types the heading one character at a time; the trailing `accent` renders in the accent colour. */
 function TypedTitle({ text, accent }: { text: string; accent: string }) {
   const accentAt = text.endsWith(accent) ? text.length - accent.length : text.length;
+  // Starts fully rendered (server + first paint), then the effect rewinds and types.
   const [count, setCount] = useState(text.length);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCount(text.length);
-      return;
-    }
-    setCount(0);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let index = 0;
-    const id = window.setInterval(() => {
+    let timer = 0;
+    const step = () => {
       index += 1;
       setCount(index);
-      if (index >= text.length) window.clearInterval(id);
-    }, 42);
-    return () => window.clearInterval(id);
+      if (index < text.length) timer = window.setTimeout(step, 42);
+    };
+    // Deferred (not a synchronous set-state in the effect body).
+    timer = window.setTimeout(() => {
+      setCount(0);
+      timer = window.setTimeout(step, 42);
+    }, 30);
+    return () => window.clearTimeout(timer);
   }, [text]);
 
   const shownInk = text.slice(0, Math.min(count, accentAt));
