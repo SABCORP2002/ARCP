@@ -120,25 +120,36 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.07, duration: 0.4 }}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky/50 hover:bg-white/[0.06] md:p-9"
+              className="group relative flex flex-col items-center overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] px-7 py-10 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-sky/50 hover:bg-white/[0.06] md:px-9 md:py-12"
             >
-              {/* top edge accent */}
+              {/* glass sheen + top edge + hover corner glow */}
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.05] to-transparent" />
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky to-transparent opacity-40 transition-opacity duration-300 group-hover:opacity-100" />
-              {/* hover corner glow */}
-              <span className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-sky/20 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
-
-              <span className="absolute right-6 top-6 font-mono text-sm tracking-widest text-sky/50">
+              <span className="pointer-events-none absolute left-1/2 top-0 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky/20 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-70" />
+              {/* oversized ghost index */}
+              <span className="pointer-events-none absolute -bottom-8 right-1 select-none font-heading text-[8rem] font-black leading-none text-white/[0.025]">
                 {String(index + 1).padStart(2, "0")}
               </span>
 
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-sky/10 text-sky">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <span className="relative z-10 mb-5 font-mono text-[11px] tracking-[0.35em] text-sky/60">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <div className="relative z-10 mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-sky/25 bg-gradient-to-br from-sky/20 to-sky/[0.04] text-sky shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <span className="pointer-events-none absolute inset-0 rounded-2xl bg-sky/25 opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-70" />
+                <svg className="relative" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                   {feature.icon}
                 </svg>
               </div>
 
-              <h3 className="font-heading text-xl font-bold text-white md:text-2xl">{feature.title}</h3>
-              <p className="mt-3 text-lg leading-relaxed text-white/65">{feature.description}</p>
+              <span className="relative z-10 mb-4 h-px w-10 bg-gradient-to-r from-transparent via-sky/70 to-transparent" />
+
+              <h3 className="relative z-10 font-heading text-xl font-bold tracking-tight text-white md:text-2xl">
+                {feature.title}
+              </h3>
+              <p className="relative z-10 mt-3 max-w-xs text-[15px] leading-relaxed text-white/60">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </div>
