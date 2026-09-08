@@ -20,12 +20,12 @@ export function Hero({ settings = defaultSiteSettings, memberCount = memberNatio
     <section className="relative overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(55%_45%_at_92%_8%,rgba(14,165,233,0.14),transparent_70%)]" />
 
-      <div className="container mx-auto grid items-center gap-12 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="container mx-auto grid items-center gap-12 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-2 lg:gap-16">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}>
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-highlight">
             {t(settings.heroEyebrowEn, settings.heroEyebrowFr)}
           </p>
-          <h1 className="text-balance font-heading text-4xl font-black leading-[1.08] text-textPrimary sm:text-5xl md:text-6xl">
+          <h1 className="text-balance font-heading text-4xl font-black leading-[1.1] text-textPrimary sm:text-5xl lg:text-[3.25rem] xl:text-6xl">
             {title}
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-textSecondary md:text-xl">
