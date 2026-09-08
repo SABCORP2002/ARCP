@@ -4,8 +4,8 @@
   "description": "A continental cooperation platform for robotics education, research and innovation.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#020D07",
-  "theme_color": "#020D07",
+  "background_color": "#F6F9FC",
+  "theme_color": "#0284C7",
   "icons": [
     {
       "src": "./assets/logo.svg",

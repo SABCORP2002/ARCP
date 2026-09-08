@@ -30,7 +30,7 @@ export function Layout({ children, title, description, path = "/", image = "/ass
       <Head>
         <title>{finalTitle}</title>
         <meta name="description" content={finalDescription} />
-        <meta name="theme-color" content="#020D07" />
+        <meta name="theme-color" content="#0284C7" />
         <link rel="canonical" href={canonicalUrl} />
         <link rel="icon" href={`${basePath}/assets/logo.svg`} type="image/svg+xml" />
         <link rel="manifest" href={`${basePath}/site.webmanifest`} />

@@ -4,11 +4,11 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
     scroll-padding-top: 7rem;
   }
   body {
-    @apply bg-background text-textPrimary font-body overflow-x-hidden;
+    @apply bg-background text-textPrimary font-body antialiased overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-bold text-textPrimary;
@@ -19,14 +19,19 @@
   button:disabled {
     @apply cursor-not-allowed opacity-60;
   }
+  ::selection {
+    @apply bg-sky/20 text-textPrimary;
+  }
 }
 
+/* Unified card surface: was a dark "glass" panel, now a clean light card. */
 .glass {
-  @apply bg-surface/80 backdrop-blur-md border border-border;
+  @apply bg-surface border border-border shadow-[0_1px_3px_rgba(15,23,42,0.05)];
 }
 
+/* Subtle interactive border used on links/cards. */
 .glow-border {
-  @apply border border-transparent hover:border-highlight focus-within:border-highlight transition-colors duration-300;
+  @apply border border-border transition-colors duration-300 hover:border-highlight/40 focus-within:border-highlight/60;
 }
 
 @media (prefers-reduced-motion: reduce) {
