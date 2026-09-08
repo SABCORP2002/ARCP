@@ -34,6 +34,18 @@
   @apply border border-border transition-colors duration-300 hover:border-highlight/40 focus-within:border-highlight/60;
 }
 
+/* Blinking caret for the hero typewriter effect. */
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.type-caret {
+  display: inline-block;
+  margin-left: 0.06em;
+  font-weight: 400;
+  animation: caret-blink 1s step-end infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
