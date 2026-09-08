@@ -71,9 +71,10 @@ export default buildConfig({
       ...(process.env.DATABASE_AUTH_TOKEN ? { authToken: process.env.DATABASE_AUTH_TOKEN } : {}),
     },
     prodMigrations: migrations,
-    wal: isFileDatabase,
-    busyTimeout: 5000,
     autoIncrement: true,
+    // WAL and busy_timeout are PRAGMAs a local SQLite file accepts; a hosted
+    // libSQL/Turso database rejects them over the wire.
+    ...(isFileDatabase ? { wal: true, busyTimeout: 5000 } : {}),
   }),
   sharp,
   typescript: { outputFile: path.resolve(directory, "payload-types.ts") },
