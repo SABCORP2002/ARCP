@@ -39,3 +39,7 @@ next-env.d.ts
 
 # build log
 build.log
+
+# Next.js AI agent rule files (auto-generated)
+/AGENTS.md
+/CLAUDE.md

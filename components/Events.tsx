@@ -35,7 +35,7 @@ const InteractiveProjector = () => {
 
       draw() {
         if (!ctx) return;
-        ctx.fillStyle = "rgba(2, 132, 199, 0.55)";
+        ctx.fillStyle = "rgba(2, 132, 199, 0.4)";
         ctx.shadowBlur = 8;
         ctx.shadowColor = "rgba(2, 132, 199, 0.4)";
         ctx.beginPath();
@@ -187,7 +187,7 @@ const InteractiveProjector = () => {
     };
   }, []);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 w-full h-full pointer-events-auto opacity-70" />;
+  return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 w-full h-full pointer-events-auto opacity-45" />;
 };
 
 export function Events({ events = platformEvents }: { events?: PlatformEvent[] }) {

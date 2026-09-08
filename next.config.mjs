@@ -26,6 +26,7 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  agentRules: false,
   basePath,
   ...(basePath ? { assetPrefix: basePath } : {}),
   async headers() {
