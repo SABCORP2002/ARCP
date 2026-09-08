@@ -1,3 +1,9 @@
+# Reverse proxy + automatic HTTPS for the two ARCP Node services.
+# Replace "africanrobotplatform.org" below with the real domain (all 4 lines).
+# Needs DNS A records for @, www and admin pointing at this server and ports
+# 80/443 open. The Node services listen only on 127.0.0.1:3000 / :3001.
+#   sudo cp deploy/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+
 africanrobotplatform.org {
   encode zstd gzip
   reverse_proxy 127.0.0.1:3000

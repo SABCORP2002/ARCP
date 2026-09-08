@@ -1,31 +1,77 @@
 # Dossier à remettre à l'hébergeur
 
-Ce dépôt déploie deux applications Node.js depuis le même code source :
+Ce dépôt déploie **deux applications Node.js** depuis le même code source, sur
+une seule machine :
 
-- `africanrobotplatform.org` → site public sur `127.0.0.1:3000` ;
-- `admin.africanrobotplatform.org` → administration sur `127.0.0.1:3001`.
+- `africanrobotplatform.org` → site public, écoute sur `127.0.0.1:3000` ;
+- `admin.africanrobotplatform.org` → administration (CMS), écoute sur `127.0.0.1:3001`.
 
-Le CMS est intégré dans `cms/`. Il utilise SQLite et ne demande aucun service de base de données séparé. Une seule instance du processus d'administration doit être lancée.
+Le CMS est dans `cms/`. Il utilise **SQLite en fichier local** et **stocke les
+médias sur le disque local** — aucun service de base de données ni de stockage
+objet externe n'est requis. Une seule instance du processus d'administration
+doit tourner à la fois.
+
+> Remplacer partout `africanrobotplatform.org` par le domaine réel :
+> `deploy/Caddyfile`, `.env.local` (`NEXT_PUBLIC_SITE_URL`, `FORM_ALLOWED_ORIGINS`),
+> `cms/.env` (`CMS_PUBLIC_URL`, `PUBLIC_SITE_URL`).
 
 ## Exigences du serveur
 
-- Linux 64 bits avec Node.js 20.19 ou plus récent ;
-- accès SSH et possibilité de lancer deux processus Node permanents ;
-- environ 1 Go de mémoire libre pour la compilation ;
-- DNS modifiable pour le domaine principal, `www` et `admin` ;
-- disque persistant et sauvegardé pour `cms/data/` et `cms/media/` ;
-- proxy HTTPS comme Caddy, Nginx ou le proxy proposé par l'hébergeur.
+- Linux 64 bits, **Ubuntu 22.04 ou 24.04** recommandé ;
+- **Node.js 22** (épinglé par `.node-version` et `cms/.node-version`) ; 20.19+ accepté ;
+- **2 Go de RAM libre minimum** pour la compilation (1 Go échoue sur Payload) ;
+- accès SSH root et deux processus Node permanents (systemd fourni) ;
+- **disque persistant et sauvegardé** pour `cms/data/` et `cms/media/` ;
+- proxy HTTPS : **Caddy** (recommandé, HTTPS automatique) ou Nginx + certbot ;
+- DNS modifiable : `@`, `www` et `admin` vers l'IP du serveur.
 
 Un hébergement limité à PHP ou à des fichiers statiques n'est pas compatible.
 
-## Variables de production
+## 1. Base du serveur (Ubuntu, en root)
 
-Créer `.env.local` à la racine :
+```bash
+apt update && apt -y upgrade
+apt -y install git curl ufw
+
+# Pare-feu : n'ouvrir que SSH et le proxy HTTPS. 3000/3001 restent privés.
+ufw allow OpenSSH
+ufw allow 80,443/tcp
+ufw --force enable
+
+# Node.js 22 (NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt -y install nodejs
+
+# Caddy (proxy + certificats automatiques)
+apt -y install debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' > /etc/apt/sources.list.d/caddy-stable.list
+apt update && apt -y install caddy
+
+# Utilisateur de service dédié
+adduser --system --group --home /var/www/arcp arcp
+```
+
+## 2. Code et secrets
+
+```bash
+git clone https://github.com/SABCORP2002/ARCP.git /var/www/arcp
+cd /var/www/arcp
+chown -R arcp:arcp /var/www/arcp
+```
+
+Générer deux secrets :
+
+```bash
+node -e "console.log('PAYLOAD_SECRET =', require('crypto').randomBytes(32).toString('hex')); console.log('CMS_API_TOKEN  =', require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Créer `/var/www/arcp/.env.local` (site public) :
 
 ```dotenv
 NEXT_PUBLIC_SITE_URL=https://africanrobotplatform.org
 CMS_URL=http://127.0.0.1:3001
-CMS_API_TOKEN=GENERER_UN_SECRET_ALEATOIRE_DE_48_CARACTERES_MINIMUM
+CMS_API_TOKEN=RECOPIER_LE_CMS_API_TOKEN_GENERE_CI_DESSUS
 FORM_ALLOWED_ORIGINS=https://africanrobotplatform.org
 NEXT_PUBLIC_BASE_PATH=
 NEXT_PUBLIC_MEMBERSHIP_FORM_ENDPOINT=/api/forms/join
@@ -33,100 +79,128 @@ NEXT_PUBLIC_CONTACT_FORM_ENDPOINT=/api/forms/contact
 NEXT_PUBLIC_NEWSLETTER_FORM_ENDPOINT=/api/forms/newsletter
 ```
 
-Créer `cms/.env` :
+Créer `/var/www/arcp/cms/.env` (administration) :
 
 ```dotenv
-PAYLOAD_SECRET=GENERER_UN_SECRET_ALEATOIRE_DE_32_CARACTERES_MINIMUM
-CMS_API_TOKEN=RECOPIER_EXACTEMENT_LE_JETON_DU_SITE_PUBLIC
+PAYLOAD_SECRET=LE_PAYLOAD_SECRET_GENERE_CI_DESSUS
+CMS_API_TOKEN=LE_MEME_CMS_API_TOKEN_QUE_DANS_.env.local
 DATABASE_URL=file:./data/arcp.db
 CMS_PUBLIC_URL=https://admin.africanrobotplatform.org
 PUBLIC_SITE_URL=https://africanrobotplatform.org
 ADMIN_EMAIL=ADRESSE_EMAIL_DU_PROPRIETAIRE
 ADMIN_PASSWORD=MOT_DE_PASSE_LONG_UNIQUE_DU_PROPRIETAIRE
+NODE_ENV=production
 ```
 
-Les fichiers de secrets ne doivent jamais être placés dans un dépôt public, une archive publique ou un dossier servi par le proxy.
+Les variables `DATABASE_AUTH_TOKEN` et `S3_*` mentionnées dans
+`cms/.env.example` sont **optionnelles** (base SQLite hébergée / stockage objet).
+Elles ne servent **pas** pour ce déploiement VPS : laisser SQLite en fichier et
+les médias sur disque.
 
-## Installation et construction
-
-Depuis la racine du projet :
+Les fichiers de secrets ne doivent jamais être committés, archivés publiquement
+ou servis par le proxy.
 
 ```bash
-node scripts/deployment-preflight.mjs
-node scripts/deploy.mjs
+chown arcp:arcp /var/www/arcp/.env.local /var/www/arcp/cms/.env
+chmod 600 /var/www/arcp/.env.local /var/www/arcp/cms/.env
+mkdir -p /var/www/arcp/cms/data /var/www/arcp/cms/media
+chown -R arcp:arcp /var/www/arcp/cms/data /var/www/arcp/cms/media
 ```
 
-Le script de déploiement effectue, dans cet ordre :
+## 3. Installation et construction
+
+En tant qu'utilisateur `arcp`, depuis `/var/www/arcp` :
+
+```bash
+sudo -u arcp bash -lc 'cd /var/www/arcp && node scripts/deployment-preflight.mjs && node scripts/deploy.mjs'
+```
+
+`scripts/deploy.mjs` effectue, dans l'ordre, en s'arrêtant à la première erreur :
 
 1. validation des secrets, domaines et dossiers persistants ;
-2. installation reproductible des deux jeux de dépendances ;
-3. migration transactionnelle du schéma SQLite ;
-4. création initiale du propriétaire et des contenus, sans écraser les données existantes ;
-5. compilation de l'administration ;
-6. compilation du site public.
+2. `npm ci` reproductible pour les deux applications ;
+3. migration transactionnelle du schéma SQLite (`cms` : `npm run migrate`) ;
+4. création initiale du propriétaire et des contenus, sans écraser l'existant
+   (`cms` : `npm run seed`, idempotent) ;
+5. compilation de l'administration puis du site public.
 
-Une erreur arrête immédiatement le déploiement avant le redémarrage des services.
+## 4. Services permanents (systemd)
 
-## Démarrage permanent sur un VPS
-
-Les modèles fournis supposent que le projet se trouve dans `/var/www/arcp` et qu'un utilisateur système `arcp` existe. Adapter ces deux valeurs si nécessaire.
+Les modèles supposent le projet dans `/var/www/arcp` et l'utilisateur `arcp`.
+Adapter si besoin.
 
 ```bash
 sudo cp deploy/systemd/arcp-admin.service /etc/systemd/system/
 sudo cp deploy/systemd/arcp-public.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now arcp-admin arcp-public
+sudo systemctl status arcp-admin arcp-public --no-pager
 ```
 
-Les ports 3000 et 3001 doivent rester fermés au réseau public. Seul le proxy HTTPS doit y accéder par `127.0.0.1`.
+Les ports 3000 et 3001 restent fermés au public (UFW). Seul le proxy y accède
+par `127.0.0.1`.
 
-## Domaines et HTTPS
+## 5. Domaines et HTTPS
 
-Le fichier `deploy/Caddyfile` est prêt pour Caddy, qui obtient et renouvelle automatiquement les certificats lorsque les DNS pointent vers le serveur.
-
-Pour Nginx, utiliser `deploy/nginx/arcp.conf.example`, puis faire ajouter les certificats TLS par le gestionnaire de l'hébergeur avant d'ouvrir le site au public.
-
-Enregistrements DNS attendus :
+DNS attendus :
 
 - `@` → adresse IP du serveur ;
-- `www` → adresse IP du serveur ou alias du domaine principal ;
-- `admin` → même adresse IP.
+- `www` → même IP (ou alias du domaine principal) ;
+- `admin` → même IP.
 
-## Contrôles après mise en ligne
+Une fois les DNS propagés :
 
-```text
-https://africanrobotplatform.org/api/health
-https://admin.africanrobotplatform.org/health
-https://admin.africanrobotplatform.org/admin
-https://africanrobotplatform.org/sitemap.xml
+```bash
+# Remplacer africanrobotplatform.org par le domaine réel dans deploy/Caddyfile
+sudo cp deploy/Caddyfile /etc/caddy/Caddyfile
+sudo systemctl reload caddy
 ```
 
-Les deux contrôles de santé doivent retourner HTTP 200. Le premier doit indiquer `cms: "ok"`.
+Caddy obtient et renouvelle les certificats automatiquement. Pour Nginx :
+`deploy/nginx/arcp.conf.example` puis certbot.
 
-Tester ensuite une création, une publication et une suppression depuis l'administration, puis les trois formulaires publics.
+## 6. Contrôles après mise en ligne
 
-## Mise à jour
+```text
+https://africanrobotplatform.org/api/health          → 200, "cms":"ok"
+https://admin.africanrobotplatform.org/health        → 200
+https://admin.africanrobotplatform.org/admin         → écran de connexion
+https://africanrobotplatform.org/sitemap.xml         → XML
+```
 
-Avant chaque mise à jour : sauvegarder `cms/data/` et `cms/media/`, puis arrêter brièvement les deux processus. Déployer la nouvelle version avec `node scripts/deploy.mjs` et redémarrer les services uniquement si le script termine sans erreur.
+Puis, connecté à l'administration : créer, publier et supprimer un contenu, et
+tester les trois formulaires publics (contact, adhésion, newsletter).
 
-## Sauvegardes
+## 7. Mise à jour
 
-Sauvegarder quotidiennement :
+```bash
+# Sauvegarder d'abord cms/data/ et cms/media/ (voir plus bas)
+cd /var/www/arcp
+sudo -u arcp git pull
+sudo -u arcp node scripts/deploy.mjs   # s'arrête à la moindre erreur
+sudo systemctl restart arcp-admin arcp-public
+```
 
-- `cms/data/arcp.db` ;
-- les éventuels fichiers `arcp.db-wal` et `arcp.db-shm` ;
-- tout le dossier `cms/media/` ;
-- les deux fichiers d'environnement dans un coffre à secrets.
+Ne redémarrer les services que si `scripts/deploy.mjs` se termine sans erreur.
 
-Pour garantir une copie cohérente, l'hébergeur doit arrêter `arcp-admin` pendant la copie ou utiliser l'outil de sauvegarde SQLite de sa plateforme. Une restauration doit être testée avant la mise en production définitive.
+## 8. Sauvegardes (quotidiennes)
 
-## Plateforme Node gérée
+- `cms/data/arcp.db` (+ `arcp.db-wal`, `arcp.db-shm` s'ils existent) ;
+- tout `cms/media/` ;
+- `.env.local` et `cms/.env` dans un coffre à secrets.
 
-Si l'hébergeur n'utilise pas systemd, créer deux services depuis le même dépôt :
+Pour une copie cohérente : arrêter `arcp-admin` pendant la copie, ou utiliser
+`sqlite3 cms/data/arcp.db ".backup '/chemin/backup.db'"`. Tester une
+restauration avant la mise en production définitive.
 
-| Service | Répertoire | Build | Démarrage | Port |
+## Plateforme Node gérée (sans systemd)
+
+Créer deux services depuis le même dépôt :
+
+| Service | Répertoire | Build | Démarrage | Disque persistant |
 |---|---|---|---|---|
-| Public | racine | `npm ci && npm run build` | `npm run start -- --hostname 0.0.0.0 --port $PORT` | fourni par l'hébergeur |
-| Admin | `cms` | `npm ci && npm run migrate && npm run seed && npm run build` | `npm run start -- --hostname 0.0.0.0 --port $PORT` | fourni par l'hébergeur |
+| Public | racine | `npm ci && npm run build` | `npm run start -- --hostname 0.0.0.0 --port $PORT` | — |
+| Admin | `cms` | `npm ci && npm run migrate && npm run seed && npm run build` | `npm run start -- --hostname 0.0.0.0 --port $PORT` | `cms/data` **et** `cms/media` |
 
-Le service Admin doit recevoir deux volumes persistants montés sur `cms/data` et `cms/media`. Le service Public doit recevoir l'URL privée ou HTTPS de l'administration dans `CMS_URL`.
+Passer `NODE_ENV=production` au service Admin, et l'URL privée/HTTPS de
+l'administration dans `CMS_URL` côté service Public.
