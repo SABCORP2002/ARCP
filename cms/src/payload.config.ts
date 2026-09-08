@@ -72,9 +72,10 @@ export default buildConfig({
     },
     prodMigrations: migrations,
     autoIncrement: true,
-    // WAL and busy_timeout are PRAGMAs a local SQLite file accepts; a hosted
-    // libSQL/Turso database rejects them over the wire.
-    ...(isFileDatabase ? { wal: true, busyTimeout: 5000 } : {}),
+    // A local SQLite file accepts WAL + busy_timeout PRAGMAs and can auto-push
+    // schema changes in dev. A hosted libSQL/Turso database rejects those
+    // PRAGMAs and must never be "pushed" to — it is driven by migrations only.
+    ...(isFileDatabase ? { wal: true, busyTimeout: 5000 } : { push: false }),
   }),
   sharp,
   typescript: { outputFile: path.resolve(directory, "payload-types.ts") },
