@@ -11,7 +11,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://africanrobotplatform.org").replace(/\/$/, "");
   const [articles, members] = await Promise.all([getArticles(), getMembers()]);
   const paths = [
-    "/", "/join/", "/contact/", "/privacy/", "/terms/",
+    "/", "/join/", "/statistics/", "/contact/", "/privacy/", "/terms/",
     ...articles.map((article) => `/articles/${article.id}/`),
     ...members.map((member) => `/members/${member.slug}/`),
   ];

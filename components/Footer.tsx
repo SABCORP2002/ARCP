@@ -32,6 +32,7 @@ export function Footer({ settings = defaultSiteSettings }: { settings?: SiteSett
                 { label: t("Ecosystems", "Écosystèmes"), href: "/#members" },
                 { label: t("Articles", "Articles"), href: "/#articles" },
                 { label: t("Events", "Événements"), href: "/#events" },
+                { label: t("Statistics", "Statistiques"), href: "/statistics" },
                 { label: t("Partners", "Partenaires"), href: "/#partners" },
                 { label: t("Contact", "Contact"), href: "/contact" }
               ].map((link) => (

@@ -39,6 +39,7 @@ export function Navbar() {
     { label: t("Ecosystems", "Écosystèmes"), href: "/#members" },
     { label: t("Articles", "Articles"), href: "/#articles" },
     { label: t("Events", "Événements"), href: "/#events" },
+    { label: t("Statistics", "Statistiques"), href: "/statistics" },
     { label: t("Partners", "Partenaires"), href: "/#partners" },
     { label: t("Contact", "Contact"), href: "/contact" },
   ];
@@ -67,7 +68,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Nav - Center */}
-          <nav aria-label={t("Main navigation", "Navigation principale")} className="hidden lg:flex items-center gap-7 xl:gap-8 px-4">
+          <nav aria-label={t("Main navigation", "Navigation principale")} className="hidden lg:flex items-center gap-5 xl:gap-7 px-3">
             {navLinks.map((link) => (
               <Link
                 key={link.label}

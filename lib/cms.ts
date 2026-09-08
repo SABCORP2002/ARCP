@@ -3,6 +3,7 @@ import { memberNations, MemberNation } from "@/data/members";
 import { platformEvents, PlatformEvent } from "@/data/events";
 import { platformPartners, PlatformPartner } from "@/data/partners";
 import { defaultSiteSettings, SiteSettings } from "@/data/site";
+import { AnnualStatistics, defaultStatistics, StatCategory } from "@/data/statistics";
 
 const cmsUrl = process.env.CMS_URL?.replace(/\/$/, "");
 const cmsToken = process.env.CMS_API_TOKEN;
@@ -240,6 +241,58 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     };
   } catch {
     return defaultSiteSettings;
+  }
+}
+
+interface CmsStatCategory {
+  key: string;
+  label_en: string;
+  label_fr: string;
+  value: string;
+  delta_en?: string | null;
+  delta_fr?: string | null;
+  description_en: string;
+  description_fr: string;
+}
+
+interface CmsStatistics {
+  year: number;
+  summary_en: string;
+  summary_fr: string;
+  methodology_en: string;
+  methodology_fr: string;
+  report_url: string | null;
+  updated_at: string;
+  categories: CmsStatCategory[];
+}
+
+export async function getStatistics(): Promise<AnnualStatistics> {
+  try {
+    const item = await cmsGlobal<CmsStatistics>("annual-statistics");
+    const categories: StatCategory[] = (item.categories || []).map((category) => ({
+      key: category.key,
+      labelEn: category.label_en,
+      labelFr: category.label_fr,
+      value: category.value,
+      ...(category.delta_en ? { deltaEn: category.delta_en } : {}),
+      ...(category.delta_fr ? { deltaFr: category.delta_fr } : {}),
+      descriptionEn: category.description_en,
+      descriptionFr: category.description_fr,
+    }));
+    if (!Number.isInteger(item.year) || categories.length === 0) return defaultStatistics;
+    const reportUrl = item.report_url || "";
+    return {
+      year: item.year,
+      summaryEn: item.summary_en,
+      summaryFr: item.summary_fr,
+      methodologyEn: item.methodology_en,
+      methodologyFr: item.methodology_fr,
+      categories,
+      reportUrl: reportUrl.startsWith("/") || /^https?:\/\//.test(reportUrl) ? reportUrl : "",
+      updatedAt: (item.updated_at || "").slice(0, 10),
+    };
+  } catch {
+    return defaultStatistics;
   }
 }
 
