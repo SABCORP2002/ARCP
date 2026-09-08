@@ -58,3 +58,7 @@ export const cameroonHighlights = {
 };
 
 export const memberCountrySlugs = memberNations.map((member) => member.slug);
+
+/** ISO codes of the UN "Middle Africa" (Afrique centrale) member states.
+ * While onboarding, these ecosystems are shown with a "Processing" status. */
+export const centralAfricaCodes = new Set(["cm", "td", "cf", "ga", "gq", "cd", "cg", "ao", "st"]);

@@ -2,21 +2,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
-import { MemberNation, memberNations } from "@/data/members";
+import { centralAfricaCodes, MemberNation, memberNations } from "@/data/members";
+
+type Status = "verified" | "processing" | "onboarding";
+
+function statusOf(member: MemberNation): Status {
+  if (member.status === "verified") return "verified";
+  return centralAfricaCodes.has(member.code) ? "processing" : "onboarding";
+}
 
 export function Members({ members = memberNations }: { members?: MemberNation[] }) {
   const { t, lang } = useLanguage();
-  const verifiedCount = members.filter((member) => member.status === "verified").length;
-  const onboardingCount = members.length - verifiedCount;
 
+  const verifiedCount = members.filter((member) => statusOf(member) === "verified").length;
+  const processingCount = members.filter((member) => statusOf(member) === "processing").length;
+  const onboardingCount = members.length - verifiedCount - processingCount;
+
+  const rank: Record<Status, number> = { verified: 0, processing: 1, onboarding: 2 };
   const ordered = [...members].sort((a, b) => {
-    if (a.status !== b.status) return a.status === "verified" ? -1 : 1;
+    const byStatus = rank[statusOf(a)] - rank[statusOf(b)];
+    if (byStatus !== 0) return byStatus;
     return t(a.nameEn, a.nameFr).localeCompare(t(b.nameEn, b.nameFr), lang === "FR" ? "fr" : "en");
   });
 
   return (
-    <section id="members" className="scroll-mt-28 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4 md:px-6">
+    <section
+      id="members"
+      className="scroll-mt-28 relative overflow-hidden bg-gradient-to-b from-[#DBEDFB] via-[#EAF4FD] to-background py-16 md:py-24"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_0%,rgba(14,165,233,0.16),transparent_70%)]"
+      />
+
+      <div className="container relative mx-auto px-4 md:px-6">
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-14">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -34,8 +53,8 @@ export function Members({ members = memberNations }: { members?: MemberNation[] 
             className="text-textSecondary text-lg md:text-xl"
           >
             {t(
-              `${verifiedCount} verified national association and ${onboardingCount} ecosystems onboarding across the continent.`,
-              `${verifiedCount} association nationale vérifiée et ${onboardingCount} écosystèmes en intégration à travers le continent.`,
+              `${verifiedCount} verified national association, ${processingCount} ecosystems in processing and ${onboardingCount} onboarding across the continent.`,
+              `${verifiedCount} association nationale vérifiée, ${processingCount} écosystèmes en traitement et ${onboardingCount} en intégration à travers le continent.`,
             )}
           </motion.p>
         </div>
@@ -46,10 +65,14 @@ export function Members({ members = memberNations }: { members?: MemberNation[] 
             {t("Represented countries", "Pays représentés")}
             <span className="text-textSecondary/50"> · {members.length}</span>
           </span>
-          <div className="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-wider text-textSecondary">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-semibold uppercase tracking-wider text-textSecondary">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-cta" />
               {t("Verified", "Vérifié")}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-warning" />
+              {t("Processing", "En traitement")}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full border border-textSecondary/60" />
@@ -70,7 +93,22 @@ export function Members({ members = memberNations }: { members?: MemberNation[] 
 
 function MemberCard({ member, index }: { member: MemberNation; index: number }) {
   const { t } = useLanguage();
-  const verified = member.status === "verified";
+  const status = statusOf(member);
+
+  const label =
+    status === "verified"
+      ? t("Verified", "Vérifié")
+      : status === "processing"
+        ? t("Processing", "En traitement")
+        : t("Onboarding", "En intégration");
+  const tone =
+    status === "verified" ? "text-cta" : status === "processing" ? "text-warning" : "text-textSecondary/70";
+  const dot =
+    status === "verified"
+      ? "bg-cta"
+      : status === "processing"
+        ? "bg-warning"
+        : "border border-textSecondary/50";
 
   return (
     <motion.div
@@ -98,13 +136,9 @@ function MemberCard({ member, index }: { member: MemberNation; index: number }) 
           <h4 className="font-heading text-sm font-bold leading-tight text-textPrimary transition-colors group-hover:text-highlight line-clamp-1">
             {t(member.nameEn, member.nameFr)}
           </h4>
-          <span
-            className={`mt-auto inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${
-              verified ? "text-cta" : "text-textSecondary/70"
-            }`}
-          >
-            <span className={`h-1.5 w-1.5 rounded-full ${verified ? "bg-cta" : "border border-textSecondary/50"}`} />
-            {verified ? t("Verified", "Vérifié") : t("Onboarding", "En intégration")}
+          <span className={`mt-auto inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${tone}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+            {label}
           </span>
         </div>
       </Link>

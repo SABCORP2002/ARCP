@@ -26,6 +26,7 @@ const config = {
         cta: "#0284C7",
         ctaHover: "#0369A1",
         success: "#16A34A",
+        warning: "#EA580C",
       },
       fontFamily: {
         heading: ["var(--font-heading)", "sans-serif"],
