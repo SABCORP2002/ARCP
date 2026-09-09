@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getCmsConfiguration } from "@/lib/cms-server";
 
+const MAX_BYTES = 30 * 1024 * 1024;
+const allowedType = (value: string) => value.startsWith("image/") || value === "application/pdf";
+
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   if (request.method !== "GET") {
     response.setHeader("Allow", "GET");
@@ -23,7 +26,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
       return;
     }
     const metadata = await metadataResponse.json() as { mimeType?: string; url?: string };
-    if (!metadata.mimeType?.startsWith("image/") || !metadata.url) {
+    if (!metadata.mimeType || !allowedType(metadata.mimeType) || !metadata.url) {
       response.status(415).end();
       return;
     }
@@ -41,21 +44,24 @@ export default async function handler(request: NextApiRequest, response: NextApi
       return;
     }
     const contentType = upstream.headers.get("content-type") || "application/octet-stream";
-    if (!contentType.startsWith("image/")) {
+    if (!allowedType(contentType)) {
       response.status(415).end();
       return;
     }
     const declaredSize = Number(upstream.headers.get("content-length") || 0);
-    if (declaredSize > 10 * 1024 * 1024) {
+    if (declaredSize > MAX_BYTES) {
       response.status(413).end();
       return;
     }
     const payload = Buffer.from(await upstream.arrayBuffer());
-    if (payload.byteLength > 10 * 1024 * 1024) {
+    if (payload.byteLength > MAX_BYTES) {
       response.status(413).end();
       return;
     }
     response.setHeader("Content-Type", contentType);
+    if (contentType === "application/pdf") {
+      response.setHeader("Content-Disposition", 'inline; filename="report.pdf"');
+    }
     response.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
     response.send(payload);
   } catch {

@@ -1,5 +1,6 @@
 import * as migration_20260826_135808_initial_arcp_schema from './20260826_135808_initial_arcp_schema';
 import * as migration_20260907_144404_membership_request_details from './20260907_144404_membership_request_details';
+import * as migration_20260909_101628_annual_statistics from './20260909_101628_annual_statistics';
 
 export const migrations = [
   {
@@ -10,6 +11,11 @@ export const migrations = [
   {
     up: migration_20260907_144404_membership_request_details.up,
     down: migration_20260907_144404_membership_request_details.down,
-    name: '20260907_144404_membership_request_details'
+    name: '20260907_144404_membership_request_details',
+  },
+  {
+    up: migration_20260909_101628_annual_statistics.up,
+    down: migration_20260909_101628_annual_statistics.down,
+    name: '20260909_101628_annual_statistics'
   },
 ];

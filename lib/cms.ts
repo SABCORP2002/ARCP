@@ -131,7 +131,7 @@ async function cmsDocuments<T>(collection: string): Promise<T[]> {
 
 async function cmsGlobal<T>(slug: string): Promise<T> {
   if (!cmsUrl || !cmsToken) throw new Error("Payload CMS is not configured");
-  const response = await fetch(`${cmsUrl}/api/globals/${slug}`, {
+  const response = await fetch(`${cmsUrl}/api/globals/${slug}?depth=1`, {
     headers: { Authorization: `Bearer ${cmsToken}` },
     signal: AbortSignal.timeout(5000),
   });
@@ -261,9 +261,9 @@ interface CmsStatistics {
   summary_fr: string;
   methodology_en: string;
   methodology_fr: string;
-  report_url: string | null;
-  updated_at: string;
-  categories: CmsStatCategory[];
+  report: CmsMedia | null;
+  updated_at: string | null;
+  categories: CmsStatCategory[] | null;
 }
 
 export async function getStatistics(): Promise<AnnualStatistics> {
@@ -280,7 +280,13 @@ export async function getStatistics(): Promise<AnnualStatistics> {
       descriptionFr: category.description_fr,
     }));
     if (!Number.isInteger(item.year) || categories.length === 0) return defaultStatistics;
-    const reportUrl = item.report_url || "";
+
+    const reportId = typeof item.report === "object" && item.report ? item.report.id : item.report;
+    const reportUrl =
+      reportId !== null && reportId !== undefined && String(reportId)
+        ? `/api/media/${encodeURIComponent(String(reportId))}`
+        : "";
+
     return {
       year: item.year,
       summaryEn: item.summary_en,
@@ -288,7 +294,7 @@ export async function getStatistics(): Promise<AnnualStatistics> {
       methodologyEn: item.methodology_en,
       methodologyFr: item.methodology_fr,
       categories,
-      reportUrl: reportUrl.startsWith("/") || /^https?:\/\//.test(reportUrl) ? reportUrl : "",
+      reportUrl,
       updatedAt: (item.updated_at || "").slice(0, 10),
     };
   } catch {

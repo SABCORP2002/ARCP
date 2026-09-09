@@ -13,7 +13,7 @@ const mediaDir = process.env.PAYLOAD_MEDIA_DIR
 
 export const Media: CollectionConfig = {
   slug: "media",
-  labels: { singular: "Média", plural: "Médias" },
+  labels: { singular: "Média / document", plural: "Médias & documents" },
   admin: { useAsTitle: "filename", group: "Contenu public" },
   access: {
     create: ownerOnly,
@@ -23,7 +23,7 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: mediaDir,
-    mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"],
+    mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "application/pdf"],
     imageSizes: [
       { name: "card", width: 800, height: 500, position: "centre", formatOptions: { format: "webp", options: { quality: 82 } } },
       { name: "large", width: 1600, height: 1000, position: "centre", formatOptions: { format: "webp", options: { quality: 85 } } },

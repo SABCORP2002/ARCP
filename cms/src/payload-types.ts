@@ -103,9 +103,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'site-settings': SiteSetting;
+    'annual-statistics': AnnualStatistic;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'annual-statistics': AnnualStatisticsSelect<false> | AnnualStatisticsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -692,6 +694,46 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * Synthèse annuelle de l'avancement de la robotique en Afrique. Le site public l'affiche sur /statistics et propose le PDF au téléchargement.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "annual-statistics".
+ */
+export interface AnnualStatistic {
+  id: number;
+  year: number;
+  updated_at?: string | null;
+  summary_en: string;
+  summary_fr: string;
+  methodology_en: string;
+  methodology_fr: string;
+  /**
+   * Téléverser le PDF du rapport annuel (facultatif tant qu'il n'est pas prêt).
+   */
+  report?: (number | null) | Media;
+  /**
+   * Un indicateur par ligne (associations, éducation, recherche, entreprises, événements, industrie, financement, politiques…).
+   */
+  categories?:
+    | {
+        key: string;
+        label_en: string;
+        label_fr: string;
+        /**
+         * Ex. « 20 », « 140+ », « US$18M ».
+         */
+        value: string;
+        delta_en?: string | null;
+        delta_fr?: string | null;
+        description_en: string;
+        description_fr: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -706,6 +748,35 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   secretariat_email?: T;
   phone?: T;
   address?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "annual-statistics_select".
+ */
+export interface AnnualStatisticsSelect<T extends boolean = true> {
+  year?: T;
+  updated_at?: T;
+  summary_en?: T;
+  summary_fr?: T;
+  methodology_en?: T;
+  methodology_fr?: T;
+  report?: T;
+  categories?:
+    | T
+    | {
+        key?: T;
+        label_en?: T;
+        label_fr?: T;
+        value?: T;
+        delta_en?: T;
+        delta_fr?: T;
+        description_en?: T;
+        description_fr?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -11,6 +11,7 @@ import { Media } from "./collections/Media";
 import { Articles, Events, Members, Partners } from "./collections/Content";
 import { ContactRequests, MembershipRequests, NewsletterSubscriptions } from "./collections/Requests";
 import { SiteSettings } from "./globals/SiteSettings";
+import { AnnualStatistics } from "./globals/AnnualStatistics";
 import { migrations } from "./migrations";
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
@@ -55,7 +56,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(directory) },
   },
   collections: [Users, Media, Articles, Members, Events, Partners, ContactRequests, MembershipRequests, NewsletterSubscriptions],
-  globals: [SiteSettings],
+  globals: [SiteSettings, AnnualStatistics],
   editor: lexicalEditor(),
   secret,
   serverURL: cmsPublicUrl,
