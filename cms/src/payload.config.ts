@@ -36,10 +36,26 @@ const connectionString =
 // Managed Postgres (Supabase, Neon, Vercel, RDS…) terminates TLS with a chain
 // Node does not bundle, so verification has to be relaxed for anything that is
 // not a plain local socket. A local dev container speaks no TLS at all.
-const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\//.test(connectionString);
+//
+// `sslmode=require` in the injected URL is parsed by recent pg-connection-string
+// as full verification and would override an explicit `ssl` option, so strip any
+// sslmode/ssl query param and drive TLS purely from the `ssl` object below.
+const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?[:/]/.test(connectionString);
+
+function withoutSslParams(url: string): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("sslmode");
+    parsed.searchParams.delete("ssl");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 const pool = isLocalDatabase
   ? { connectionString }
-  : { connectionString, ssl: { rejectUnauthorized: false } };
+  : { connectionString: withoutSslParams(connectionString), ssl: { rejectUnauthorized: false } };
 
 // Uploads: local disk by default; Vercel Blob when BLOB_READ_WRITE_TOKEN is set;
 // or an S3-compatible bucket when S3_BUCKET is set. Plugins are always registered
