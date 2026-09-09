@@ -1,0 +1,3 @@
+# Keep unused draft assets out of `git archive` / GitHub "Download ZIP".
+archive/ export-ignore
+.github/ export-ignore
