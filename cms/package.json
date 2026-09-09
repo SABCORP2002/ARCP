@@ -13,8 +13,10 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "migrate:fresh": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:fresh --force-accept-warning",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed.ts",
     "deploy": "npm run migrate && npm run seed && npm run build",
+    "deploy:fresh": "npm run migrate:fresh && npm run seed && npm run build",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
