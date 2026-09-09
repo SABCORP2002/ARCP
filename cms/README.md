@@ -50,6 +50,34 @@ Le schéma SQLite est versionné dans `src/migrations/`. Exécuter `npm run migr
 
 Le site public reçoit seulement `CMS_URL` et `CMS_API_TOKEN` dans ses variables serveur.
 
+## Déploiement de test sur Vercel (base SQLite hébergée)
+
+Ce dossier est aussi poussé seul dans le dépôt **ARCP-Backoffice** pour un
+déploiement autonome. Sur Vercel, remplacer le fichier SQLite local par une
+base **Turso / libSQL** :
+
+- **Root Directory** : la racine du dépôt ARCP-Backoffice.
+- **Build Command** : `npm run deploy` (migrate → seed → build).
+- **Variables d'environnement** :
+
+  | Clé | Valeur |
+  |---|---|
+  | `PAYLOAD_SECRET` | 32+ caractères aléatoires |
+  | `CMS_API_TOKEN` | 48+ caractères (identique au site public) |
+  | `DATABASE_URL` | `libsql://<votre-base>.turso.io` (ou `https://…` pour forcer le transport HTTP) |
+  | `DATABASE_AUTH_TOKEN` | jeton Turso |
+  | `CMS_PUBLIC_URL` | `https://<votre-projet>.vercel.app` |
+  | `PUBLIC_SITE_URL` | URL du site public |
+  | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | compte propriétaire (créé une seule fois) |
+  | `NODE_ENV` | `production` |
+
+- **Médias** : sans stockage objet, l'upload d'images/PDF échoue sur Vercel.
+  Ajouter `S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
+  (Cloudflare R2, Backblaze B2…) pour l'activer. La gestion des contenus texte
+  fonctionne sans.
+
+Depuis le dépôt principal, synchroniser avec : `npm run push:backoffice`.
+
 ## Sauvegardes
 
 Sauvegarder ensemble :

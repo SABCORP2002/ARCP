@@ -1,0 +1,25 @@
+# dependencies
+/node_modules/
+
+# next.js
+/.next/
+/out/
+
+# environment / secrets
+.env
+.env*.local
+
+# payload runtime data (kept only on a persistent disk)
+/data/*
+!/data/.gitkeep
+/media/*
+!/media/.gitkeep
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+.DS_Store
+npm-debug.log*
+.vercel

@@ -12,6 +12,7 @@
     "cms:seed": "npm --prefix cms run seed",
     "cms:build": "npm --prefix cms run build",
     "cms:start": "npm --prefix cms run start -- -H 127.0.0.1 -p 3001",
+    "push:backoffice": "node scripts/push-backoffice.mjs",
     "deploy:check": "node scripts/deployment-preflight.mjs",
     "deploy:build": "node scripts/deploy.mjs",
     "start": "next start",
