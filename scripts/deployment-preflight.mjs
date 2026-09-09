@@ -52,7 +52,7 @@ const publicEnvironment = parseEnvironment(publicEnvironmentPath);
 const cmsEnvironment = parseEnvironment(cmsEnvironmentPath);
 
 requireValues(publicEnvironment, ["NEXT_PUBLIC_SITE_URL", "CMS_URL", "CMS_API_TOKEN", "FORM_ALLOWED_ORIGINS"], "public site");
-requireValues(cmsEnvironment, ["PAYLOAD_SECRET", "CMS_API_TOKEN", "DATABASE_URL", "CMS_PUBLIC_URL", "PUBLIC_SITE_URL", "ADMIN_EMAIL", "ADMIN_PASSWORD"], "administration");
+requireValues(cmsEnvironment, ["PAYLOAD_SECRET", "CMS_API_TOKEN", "CMS_PUBLIC_URL", "PUBLIC_SITE_URL", "ADMIN_EMAIL", "ADMIN_PASSWORD"], "administration");
 
 const [major, minor] = process.versions.node.split(".").map(Number);
 if (major < 20 || (major === 20 && minor < 19)) problems.push("Node.js 20.19 or newer is required");
@@ -90,18 +90,18 @@ if (!useExamples && publicUrl && cmsPublicUrl && publicUrl.origin === cmsPublicU
   problems.push("The public site and administration must use distinct origins");
 }
 const databaseUrl = cmsEnvironment.DATABASE_URL || "";
-const fileDatabase = databaseUrl.startsWith("file:");
-const remoteDatabase = databaseUrl.startsWith("libsql:") || databaseUrl.startsWith("https:");
-if (!fileDatabase && !remoteDatabase) {
-  problems.push("DATABASE_URL must be a SQLite file: URL or a hosted libsql:// URL");
+// A managed Postgres. On Vercel the "Postgres" store injects POSTGRES_URL, so
+// DATABASE_URL may legitimately be empty there — only validate when it is set.
+if (databaseUrl && !/^postgres(ql)?:\/\//.test(databaseUrl)) {
+  problems.push("DATABASE_URL must be a postgres:// connection string (or empty when the host injects POSTGRES_URL)");
 }
-if (remoteDatabase && !cmsEnvironment.DATABASE_AUTH_TOKEN) {
-  problems.push("DATABASE_AUTH_TOKEN is required when DATABASE_URL is a hosted libsql:// URL");
+if (!useExamples && !databaseUrl && !cmsEnvironment.POSTGRES_URL) {
+  problems.push("administration: DATABASE_URL (or POSTGRES_URL, injected by the Vercel Postgres store) is required");
 }
 
 const requiredDirectories = [];
-if (fileDatabase) requiredDirectories.push("cms/data");
-if (!cmsEnvironment.S3_BUCKET && !cmsEnvironment.PAYLOAD_MEDIA_DIR) requiredDirectories.push("cms/media");
+const localMedia = !cmsEnvironment.BLOB_READ_WRITE_TOKEN && !cmsEnvironment.S3_BUCKET && !cmsEnvironment.PAYLOAD_MEDIA_DIR;
+if (localMedia) requiredDirectories.push("cms/media");
 for (const relativeDirectory of requiredDirectories) {
   const directory = path.join(root, relativeDirectory);
   try {

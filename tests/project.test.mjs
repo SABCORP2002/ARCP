@@ -90,8 +90,8 @@ test("separate code-based CMS architecture is present without WordPress or conta
   const seed = JSON.parse(read("cms/seed.json"));
 
   assert.equal(cmsPackage.dependencies.payload, "3.88.0");
-  assert.equal(cmsPackage.dependencies["@payloadcms/db-sqlite"], "3.88.0");
-  assert.match(config, /sqliteAdapter/);
+  assert.equal(cmsPackage.dependencies["@payloadcms/db-postgres"], "3.88.0");
+  assert.match(config, /postgresAdapter/);
   assert.match(config, /graphQL: \{ disable: true \}/);
   assert.match(access, /timingSafeEqual/);
   assert.match(publicEnvironment, /CMS_API_TOKEN=/);
@@ -139,7 +139,8 @@ test("hosting handoff includes migrations, health checks and two private service
   assert.match(caddy, /admin\.africanrobotplatform\.org/);
   assert.match(publicHealth, /cms === "ok"/);
   assert.match(cmsHealth, /arcp-administration/);
-  assert.ok(migrations.some((file) => file.endsWith("_initial_arcp_schema.ts")));
+  assert.ok(migrations.some((file) => /_initial_postgres\.ts$/.test(file)));
+  assert.match(read("cms/src/migrations/index.ts"), /export const migrations = \[/);
   assert.ok(!fs.existsSync(path.join(root, ".env.local")));
   assert.ok(!fs.existsSync(path.join(root, "cms", ".env")));
 });

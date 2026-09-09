@@ -9,9 +9,7 @@
 .env
 .env*.local
 
-# payload runtime data (kept only on a persistent disk)
-/data/*
-!/data/.gitkeep
+# payload media (local dev only; production uses Vercel Blob / S3 / a persistent disk)
 /media/*
 !/media/.gitkeep
 
@@ -23,3 +21,7 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 .vercel
+
+# Next.js AI agent rule files (auto-generated)
+/AGENTS.md
+/CLAUDE.md

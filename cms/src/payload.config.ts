@@ -1,6 +1,7 @@
-import { sqliteAdapter } from "@payloadcms/db-sqlite";
+import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import path from "node:path";
 import { buildConfig } from "payload";
 import type { Plugin } from "payload";
@@ -23,16 +24,24 @@ if (!secret || secret.startsWith("replace-with")) {
   throw new Error("PAYLOAD_SECRET must contain a strong private value.");
 }
 
-// SQLite: a local file for development, or a hosted libSQL/Turso URL in
-// production. A local file also gets WAL mode; a remote database does not.
-const databaseUrl = process.env.DATABASE_URL || "file:./data/arcp.db";
-const isFileDatabase = databaseUrl.startsWith("file:");
+// PostgreSQL. On Vercel the "Postgres" storage injects POSTGRES_URL (pooled) and
+// POSTGRES_URL_NON_POOLING (direct); use the direct one for migrations/DDL when
+// available. DATABASE_URL overrides everything for local / other hosts.
+const connectionString =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  process.env.POSTGRES_URL ||
+  "";
 
-// Uploads: the local disk by default, or an S3-compatible bucket (Cloudflare
-// R2, Backblaze B2, AWS S3…) when S3_BUCKET is set. Files are still streamed
-// through Payload's own API, so the bucket stays private. The plugin is always
-// registered (so the import map is stable) but only active when configured.
+// Uploads: local disk by default; Vercel Blob when BLOB_READ_WRITE_TOKEN is set;
+// or an S3-compatible bucket when S3_BUCKET is set. Plugins are always registered
+// (stable import map) but only active when configured.
 const plugins: Plugin[] = [
+  vercelBlobStorage({
+    enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+    collections: { media: true },
+    token: process.env.BLOB_READ_WRITE_TOKEN || "",
+  }),
   s3Storage({
     enabled: Boolean(process.env.S3_BUCKET),
     collections: { media: true },
@@ -66,17 +75,11 @@ export default buildConfig({
   telemetry: false,
   maxDepth: 2,
   plugins,
-  db: sqliteAdapter({
-    client: {
-      url: databaseUrl,
-      ...(process.env.DATABASE_AUTH_TOKEN ? { authToken: process.env.DATABASE_AUTH_TOKEN } : {}),
-    },
+  db: postgresAdapter({
+    pool: { connectionString },
     prodMigrations: migrations,
-    autoIncrement: true,
-    // A local SQLite file accepts WAL + busy_timeout PRAGMAs and can auto-push
-    // schema changes in dev. A hosted libSQL/Turso database rejects those
-    // PRAGMAs and must never be "pushed" to — it is driven by migrations only.
-    ...(isFileDatabase ? { wal: true, busyTimeout: 5000 } : { push: false }),
+    // Production is migration-driven; dev may auto-sync the schema.
+    push: process.env.NODE_ENV !== "production",
   }),
   sharp,
   typescript: { outputFile: path.resolve(directory, "payload-types.ts") },

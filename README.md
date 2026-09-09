@@ -5,7 +5,7 @@ Le projet contient deux applications Node.js indépendantes, sans WordPress et s
 - le site public Next.js, destiné aux visiteurs ;
 - le site d'administration Payload CMS, situé dans `cms/` et destiné au propriétaire.
 
-L'administration utilise SQLite directement depuis le code. Les données sont conservées dans `cms/data/` et les images dans `cms/media/`. Le site public communique avec son API côté serveur ; le jeton privé n'est jamais transmis au navigateur.
+L'administration utilise **PostgreSQL**. Les images sont conservées dans `cms/media/` en local, ou sur Vercel Blob / un bucket S3 en production. Le site public communique avec son API côté serveur ; le jeton privé n'est jamais transmis au navigateur.
 
 ## Contenus administrables
 
@@ -21,13 +21,18 @@ Un contenu publié apparaît sur le site public sous environ 60 secondes. Si l'a
 
 ## Installation
 
-Node.js 20.19 ou plus récent est requis.
+Node.js 20.19 ou plus récent et un PostgreSQL accessible sont requis. Pour une base locale :
+
+```powershell
+docker run -d --name arcp-pg -e POSTGRES_PASSWORD=arcp -p 5432:5432 postgres:16
+```
 
 ```powershell
 npm ci
 npm run cms:install
 Copy-Item .env.example .env.local
 Copy-Item cms/.env.example cms/.env
+npm --prefix cms run migrate
 ```
 
 Remplacer ensuite tous les secrets d'exemple. La valeur `CMS_API_TOKEN` doit être strictement identique dans `.env.local` et `cms/.env`.
@@ -63,11 +68,11 @@ npm --prefix cms audit --audit-level=moderate
 - `www.africanrobotplatform.org` : application publique Next.js ;
 - `admin.africanrobotplatform.org` : seconde application Next.js/Payload ;
 - les deux applications utilisent des processus Node distincts ;
-- `cms/data/` et `cms/media/` doivent se trouver sur un disque persistant ;
+- la base PostgreSQL et les médias (`cms/media/`, Vercel Blob ou S3) doivent être persistants ;
 - HTTPS est obligatoire sur les deux domaines ;
-- l'administration doit tourner sur une seule instance lorsque SQLite est utilisé.
+- l'administration peut tourner sur plusieurs instances (PostgreSQL et le stockage objet sont partagés).
 
-Sauvegarder quotidiennement le fichier SQLite et le dossier des médias. Pour une future installation à très fort trafic ou avec plusieurs instances d'administration, l'adaptateur SQLite pourra être remplacé par une base PostgreSQL gérée, sans modifier le site public.
+Sauvegarder quotidiennement la base PostgreSQL (`pg_dump`) et le dossier des médias. Un déploiement 100 % Vercel est possible : Vercel Postgres + Vercel Blob, sans service externe (voir `cms/README.md`).
 
 Consultez `cms/README.md` pour l'exploitation de l'administration.
 

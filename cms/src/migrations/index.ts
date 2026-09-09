@@ -1,21 +1,9 @@
-import * as migration_20260826_135808_initial_arcp_schema from './20260826_135808_initial_arcp_schema';
-import * as migration_20260907_144404_membership_request_details from './20260907_144404_membership_request_details';
-import * as migration_20260909_101628_annual_statistics from './20260909_101628_annual_statistics';
+import * as migration_20260909_132200_initial_postgres from './20260909_132200_initial_postgres';
 
 export const migrations = [
   {
-    up: migration_20260826_135808_initial_arcp_schema.up,
-    down: migration_20260826_135808_initial_arcp_schema.down,
-    name: '20260826_135808_initial_arcp_schema',
-  },
-  {
-    up: migration_20260907_144404_membership_request_details.up,
-    down: migration_20260907_144404_membership_request_details.down,
-    name: '20260907_144404_membership_request_details',
-  },
-  {
-    up: migration_20260909_101628_annual_statistics.up,
-    down: migration_20260909_101628_annual_statistics.down,
-    name: '20260909_101628_annual_statistics'
+    up: migration_20260909_132200_initial_postgres.up,
+    down: migration_20260909_132200_initial_postgres.down,
+    name: '20260909_132200_initial_postgres'
   },
 ];

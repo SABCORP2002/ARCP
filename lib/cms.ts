@@ -91,9 +91,24 @@ export interface HomeContent {
   source: "cms" | "fallback";
 }
 
+function mediaUrl(media: CmsMedia | null): string {
+  if (typeof media === "object" && media) {
+    // Cloud storage (Vercel Blob, S3) returns an absolute public URL — use it directly.
+    if (media.url && /^https?:\/\//.test(media.url)) return media.url;
+    if (media.id !== null && media.id !== undefined && String(media.id)) {
+      return `/api/media/${encodeURIComponent(String(media.id))}`;
+    }
+    return "";
+  }
+  if (media !== null && media !== undefined && String(media)) {
+    return `/api/media/${encodeURIComponent(String(media))}`;
+  }
+  return "";
+}
+
 function assetPath(media: CmsMedia | null, fallback: string, directory: "articles" | "partners") {
-  const mediaId = typeof media === "object" && media ? media.id : media;
-  if (mediaId !== null && mediaId !== undefined && String(mediaId)) return `/api/media/${encodeURIComponent(String(mediaId))}`;
+  const resolved = mediaUrl(media);
+  if (resolved) return resolved;
   if (fallback) return `/assets/${directory}/${fallback}`;
   return directory === "articles" ? "/assets/hero-illlustration.jpg" : "/assets/logo.svg";
 }
@@ -281,12 +296,6 @@ export async function getStatistics(): Promise<AnnualStatistics> {
     }));
     if (!Number.isInteger(item.year) || categories.length === 0) return defaultStatistics;
 
-    const reportId = typeof item.report === "object" && item.report ? item.report.id : item.report;
-    const reportUrl =
-      reportId !== null && reportId !== undefined && String(reportId)
-        ? `/api/media/${encodeURIComponent(String(reportId))}`
-        : "";
-
     return {
       year: item.year,
       summaryEn: item.summary_en,
@@ -294,7 +303,7 @@ export async function getStatistics(): Promise<AnnualStatistics> {
       methodologyEn: item.methodology_en,
       methodologyFr: item.methodology_fr,
       categories,
-      reportUrl,
+      reportUrl: mediaUrl(item.report),
       updatedAt: (item.updated_at || "").slice(0, 10),
     };
   } catch {

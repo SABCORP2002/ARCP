@@ -6,7 +6,7 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "frame-ancestors 'none'",
   "form-action 'self' mailto:",
-  "img-src 'self' data: https://flagcdn.com",
+  "img-src 'self' data: https://flagcdn.com https://*.public.blob.vercel-storage.com",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
@@ -37,6 +37,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'flagcdn.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
         port: '',
         pathname: '/**',
       },

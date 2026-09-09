@@ -1,28 +1,35 @@
 # Administration ARCP intégrée au code
 
-Cette application Payload CMS est un site indépendant du site public. Elle fournit l'authentification du propriétaire, l'interface de gestion, l'API REST, la base SQLite et la gestion des médias.
+Cette application Payload CMS est un site indépendant du site public. Elle fournit l'authentification du propriétaire, l'interface de gestion, l'API REST, la base **PostgreSQL** et la gestion des médias.
 
 ## Organisation
 
 - `src/payload.config.ts` : configuration générale et sécurité ;
 - `src/collections/` : modèles des articles, membres, événements, partenaires, médias et demandes ;
-- `src/globals/SiteSettings.ts` : textes et coordonnées globales ;
+- `src/globals/` : `SiteSettings` (textes et coordonnées) et `AnnualStatistics` (statistiques annuelles + PDF) ;
 - `src/seed.ts` et `seed.json` : données initiales ;
-- `data/arcp.db` : base SQLite créée au premier lancement ;
-- `media/` : fichiers téléversés par le propriétaire.
+- `src/migrations/` : schéma versionné (généré par `npm run migrate:create`) ;
+- `media/` : uploads en développement local (en production : Vercel Blob ou S3).
 
 ## Première installation
+
+Base Postgres locale (Docker) :
+
+```powershell
+docker run -d --name arcp-pg -e POSTGRES_PASSWORD=arcp -p 5432:5432 postgres:16
+```
 
 Depuis la racine du projet :
 
 ```powershell
 npm run cms:install
-Copy-Item cms/.env.example cms/.env
+Copy-Item cms/.env.example cms/.env   # DATABASE_URL pointe vers le Postgres local
+npm --prefix cms run migrate
 npm run cms:seed
 npm run cms:dev
 ```
 
-Avant le seed, remplacer les secrets, l'adresse e-mail et le mot de passe d'exemple dans `cms/.env`. Le compte est créé une seule fois ; les exécutions suivantes ne changent ni son mot de passe ni les contenus existants.
+Avant le seed, remplacer les secrets, l'e-mail et le mot de passe d'exemple dans `cms/.env`. Le compte est créé une seule fois ; les exécutions suivantes ne changent ni son mot de passe ni les contenus existants.
 
 Ouvrir `http://localhost:3001/admin` et se connecter avec le compte défini dans `cms/.env`.
 
@@ -36,61 +43,50 @@ Ouvrir `http://localhost:3001/admin` et se connecter avec le compte défini dans
 
 Les formulaires sont classés dans « Demandes reçues ». Seul le propriétaire connecté peut les lire, les modifier ou les supprimer.
 
-## Production
+## Déploiement sur Vercel (100 % Vercel, aucun service externe)
 
-1. Construire avec `npm run cms:build`.
-2. Lancer avec `npm run cms:start` derrière `admin.africanrobotplatform.org`.
-3. Définir `CMS_PUBLIC_URL=https://admin.africanrobotplatform.org`.
-4. Définir `PUBLIC_SITE_URL=https://africanrobotplatform.org`.
-5. Conserver `data/` et `media/` sur un disque persistant accessible en écriture.
-6. N'exécuter qu'une instance de l'administration avec SQLite.
-7. Ne jamais exposer `PAYLOAD_SECRET`, `CMS_API_TOKEN` ou le fichier `.env`.
+Ce dossier est aussi poussé seul dans le dépôt **ARCP-Backoffice** pour un déploiement autonome (`npm run push:backoffice` depuis le dépôt principal).
 
-Le schéma SQLite est versionné dans `src/migrations/`. Exécuter `npm run migrate` avant chaque compilation de production. Les migrations sont également vérifiées automatiquement au démarrage afin qu'une base neuve puisse être initialisée correctement.
+1. Projet Vercel depuis `ARCP-Backoffice`, **Root Directory** = racine du dépôt.
+2. **Storage → Create Database → Postgres**, connecté au projet → injecte `POSTGRES_URL` automatiquement.
+3. **Storage → Create → Blob**, connecté au projet → injecte `BLOB_READ_WRITE_TOKEN` automatiquement.
+4. **Build Command** : `npm run deploy` (migrate → seed → build). **Start Command** : `npm run start`.
+5. Variables d'environnement :
 
-Le site public reçoit seulement `CMS_URL` et `CMS_API_TOKEN` dans ses variables serveur.
+   | Clé | Valeur |
+   |---|---|
+   | `PAYLOAD_SECRET` | 32+ caractères aléatoires |
+   | `CMS_API_TOKEN` | 48+ caractères (identique au site public) |
+   | `CMS_PUBLIC_URL` | `https://<votre-projet>.vercel.app` |
+   | `PUBLIC_SITE_URL` | URL du site public |
+   | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | compte propriétaire (créé une seule fois) |
 
-## Déploiement de test sur Vercel (base SQLite hébergée)
+   `NODE_ENV=production` est déjà défini par Vercel. `POSTGRES_URL` et `BLOB_READ_WRITE_TOKEN` sont injectés par les stores — ne pas les recopier à la main.
 
-Ce dossier est aussi poussé seul dans le dépôt **ARCP-Backoffice** pour un
-déploiement autonome. Sur Vercel, remplacer le fichier SQLite local par une
-base **Turso / libSQL** :
+Sur un autre hébergeur (Railway, VPS…) : fournir `DATABASE_URL=postgres://…` et, pour les médias, soit `BLOB_READ_WRITE_TOKEN`, soit `S3_BUCKET`/`S3_ENDPOINT`/`S3_ACCESS_KEY_ID`/`S3_SECRET_ACCESS_KEY`, soit `PAYLOAD_MEDIA_DIR` vers un disque persistant.
 
-- **Root Directory** : la racine du dépôt ARCP-Backoffice.
-- **Build Command** : `npm run deploy` (migrate → seed → build).
-- **Variables d'environnement** :
+Le site public ne reçoit que `CMS_URL` et `CMS_API_TOKEN` dans ses variables serveur. Ne jamais exposer `PAYLOAD_SECRET`, `CMS_API_TOKEN` ou le fichier `.env`.
 
-  | Clé | Valeur |
-  |---|---|
-  | `PAYLOAD_SECRET` | 32+ caractères aléatoires |
-  | `CMS_API_TOKEN` | 48+ caractères (identique au site public) |
-  | `DATABASE_URL` | `libsql://<votre-base>.turso.io` (ou `https://…` pour forcer le transport HTTP) |
-  | `DATABASE_AUTH_TOKEN` | jeton Turso |
-  | `CMS_PUBLIC_URL` | `https://<votre-projet>.vercel.app` |
-  | `PUBLIC_SITE_URL` | URL du site public |
-  | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | compte propriétaire (créé une seule fois) |
-  | `NODE_ENV` | `production` |
+## Migrations
 
-- **Médias** : sans stockage objet, l'upload d'images/PDF échoue sur Vercel.
-  Ajouter `S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`
-  (Cloudflare R2, Backblaze B2…) pour l'activer. La gestion des contenus texte
-  fonctionne sans.
+Le schéma est versionné dans `src/migrations/`. Après un changement de collection/global :
 
-Depuis le dépôt principal, synchroniser avec : `npm run push:backoffice`.
+```powershell
+npm --prefix cms run migrate:create <nom>   # génère la migration contre la base
+```
+
+`npm run deploy` applique les migrations en attente avant la compilation, et `getPayload()` les vérifie aussi au démarrage.
 
 ## Sauvegardes
 
-Sauvegarder ensemble :
+- Base : `pg_dump` régulier de la base Postgres (Vercel Postgres, Neon et les hébergeurs gérés proposent aussi des sauvegardes automatiques).
+- Médias : Vercel Blob / le bucket S3 sont déjà redondés côté fournisseur ; sur disque, sauvegarder `media/`.
+- Secrets : dans un coffre chiffré, séparé du dépôt.
 
-- `data/arcp.db` ;
-- `data/arcp.db-wal` et `data/arcp.db-shm` lorsqu'ils existent ;
-- le dossier `media/` ;
-- les secrets dans un coffre sécurisé séparé.
-
-Arrêter brièvement l'administration ou utiliser une sauvegarde SQLite cohérente avant de copier la base. Conserver plusieurs versions chiffrées hors du serveur et tester régulièrement une restauration.
+Tester régulièrement une restauration.
 
 Documentation officielle :
 
 - https://payloadcms.com/docs/getting-started/installation
-- https://payloadcms.com/docs/database/sqlite
+- https://payloadcms.com/docs/database/postgres
 - https://payloadcms.com/docs/access-control/overview
