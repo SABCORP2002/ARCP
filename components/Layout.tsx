@@ -32,7 +32,8 @@ export function Layout({ children, title, description, path = "/", image = "/ass
         <meta name="description" content={finalDescription} />
         <meta name="theme-color" content="#0284C7" />
         <link rel="canonical" href={canonicalUrl} />
-        <link rel="icon" href={`${basePath}/assets/logo.svg`} type="image/svg+xml" />
+        <link rel="icon" type="image/png" sizes="500x500" href={`${basePath}/assets/logo-mark.png`} />
+        <link rel="apple-touch-icon" href={`${basePath}/assets/logo-mark.png`} />
         <link rel="manifest" href={`${basePath}/site.webmanifest`} />
         <meta property="og:type" content={type} />
         <meta property="og:site_name" content="ARCP" />

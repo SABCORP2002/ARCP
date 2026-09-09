@@ -8,9 +8,9 @@
   "theme_color": "#0284C7",
   "icons": [
     {
-      "src": "./assets/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "./assets/logo-mark.png",
+      "sizes": "500x500",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
