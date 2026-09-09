@@ -33,6 +33,14 @@ const connectionString =
   process.env.POSTGRES_URL ||
   "";
 
+// Managed Postgres (Supabase, Neon, Vercel, RDS…) terminates TLS with a chain
+// Node does not bundle, so verification has to be relaxed for anything that is
+// not a plain local socket. A local dev container speaks no TLS at all.
+const isLocalDatabase = /@(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\//.test(connectionString);
+const pool = isLocalDatabase
+  ? { connectionString }
+  : { connectionString, ssl: { rejectUnauthorized: false } };
+
 // Uploads: local disk by default; Vercel Blob when BLOB_READ_WRITE_TOKEN is set;
 // or an S3-compatible bucket when S3_BUCKET is set. Plugins are always registered
 // (stable import map) but only active when configured.
@@ -76,7 +84,7 @@ export default buildConfig({
   maxDepth: 2,
   plugins,
   db: postgresAdapter({
-    pool: { connectionString },
+    pool,
     prodMigrations: migrations,
     // Production is migration-driven; dev may auto-sync the schema.
     push: process.env.NODE_ENV !== "production",
