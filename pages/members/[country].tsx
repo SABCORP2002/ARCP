@@ -40,13 +40,13 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
   const associations = isVerified && (isCameroon || member.websiteUrl)
     ? [{
         name: t(member.associationNameEn || "Cameroon Robotics Association", member.associationNameFr || "Association Camerounaise de Robotique"),
-        logo: "/assets/logo.svg",
+        logo: isCameroon ? "/assets/cameroon-robotics-association.png" : "/assets/logo.svg",
         link: member.websiteUrl || "https://cameroonrobotics.org",
       }]
     : [];
 
   return (
-    <Layout title={`${name} | ARCP`} description={description} path={`/members/${member.slug}`} image="/assets/member-nations.jpg" settings={settings}>
+    <Layout title={name} description={description} path={`/members/${member.slug}`} image="/assets/member-nations.jpg" settings={settings}>
       <section className="relative pt-24 pb-20 border-b border-border overflow-hidden">
         <div className="absolute inset-0 bg-surfaceAlt -z-10" />
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 -z-10 pointer-events-none" aria-hidden="true">
@@ -162,9 +162,9 @@ export default function MemberProfile({ member, settings }: MemberProfileProps) 
           {associations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {associations.map((association) => (
-                <a key={association.link} href={association.link} target="_blank" rel="noopener noreferrer" className="glass p-8 rounded-[2rem] flex items-center gap-6 hover:-translate-y-2 transition-transform glow-border group">
-                  <div className="relative w-16 h-16 shrink-0 bg-surfaceAlt rounded-xl border border-border">
-                    <Image src={association.logo} alt="" fill sizes="64px" className="object-contain p-2" />
+                <a key={association.link} href={association.link} target="_blank" rel="noopener noreferrer" className="glass p-6 rounded-[2rem] flex flex-col items-start gap-4 hover:-translate-y-2 transition-transform glow-border group">
+                  <div className="relative h-16 w-40 max-w-full shrink-0 rounded-xl border border-border bg-surface p-3">
+                    <Image src={association.logo} alt={association.name} fill sizes="160px" className="object-contain" />
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-lg text-textPrimary group-hover:text-highlight transition-colors leading-tight">{association.name}</h3>

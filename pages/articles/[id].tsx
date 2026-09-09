@@ -19,7 +19,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
 
   if (!article) {
     return (
-      <Layout title="Loading... | ARCP Articles">
+      <Layout title="Loading…">
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-textSecondary text-xl animate-pulse">Loading Article...</div>
         </div>
@@ -44,7 +44,7 @@ export default function ArticlePage({ article, settings }: ArticlePageProps) {
 
   return (
     <Layout
-      title={`${currentTitle} | ARCP Articles`}
+      title={currentTitle}
       description={currentExcerpt}
       path={`/articles/${article.id}`}
       image={contentImageSrc(article.image, "articles")}
