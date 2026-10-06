@@ -82,7 +82,9 @@ apt -y install postgresql
 sudo -u postgres psql -c "CREATE ROLE arcp LOGIN PASSWORD 'REPLACE_WITH_A_LONG_RANDOM_PASSWORD';"
 sudo -u postgres psql -c "CREATE DATABASE arcp OWNER arcp;"
 
-# Caddy — reverse proxy with automatic HTTPS (recommended; skip if you prefer Nginx)
+# Caddy — reverse proxy with automatic HTTPS. ONLY on a plain Ubuntu server.
+# On a HestiaCP server, SKIP this block: HestiaCP's Nginx already owns ports
+# 80/443 and handles TLS (see section 8, "HestiaCP variant").
 apt -y install debian-keyring debian-archive-keyring apt-transport-https
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' > /etc/apt/sources.list.d/caddy-stable.list
@@ -91,6 +93,9 @@ apt update && apt -y install caddy
 # Dedicated, unprivileged service account (no login shell)
 adduser --system --group --home /var/www/arcp arcp
 ```
+
+> **HestiaCP servers:** do not install Caddy. Two web servers cannot both
+> listen on 80/443. Use HestiaCP's Nginx as the only public entry point.
 
 ---
 
@@ -217,6 +222,43 @@ Expected DNS records, pointing at the server's IP:
 - `@` (apex domain)
 - `www`
 - `admin`
+
+### 8a. HestiaCP variant (recommended for UltaHost servers running HestiaCP)
+
+HestiaCP's Nginx is the single public web server. It terminates TLS (Let's
+Encrypt, issued from the panel) and forwards each domain to a local Node
+service. Caddy is not used.
+
+1. **PostgreSQL** installed natively with `apt` (section 2) — it is not managed
+   from the HestiaCP panel; use the command line as shown.
+2. **Node services** unchanged: `arcp-public` on `127.0.0.1:3000`,
+   `arcp-admin` on `127.0.0.1:3001` (section 6).
+3. **Create the three web domains in HestiaCP** — `africanrobotplatform.org`,
+   `www.africanrobotplatform.org` (or a redirect to the apex), and
+   `admin.africanrobotplatform.org` — and enable **Let's Encrypt** on each.
+4. **Add the proxy directives** from this repository to each domain's custom
+   Nginx template:
+   - public domain → `deploy/hestiacp/proxy-public.nginx`
+   - admin domain → `deploy/hestiacp/proxy-admin.nginx`
+5. Make sure nothing else already listens on ports `3000` or `3001`
+   (`ss -ltnp | grep -E ':(3000|3001)\b'` should print nothing before the
+   services start).
+6. Verify the upstreams before testing the domains:
+
+```bash
+systemctl status arcp-public arcp-admin --no-pager
+curl -I http://127.0.0.1:3000
+curl -s http://127.0.0.1:3001/health
+```
+
+If an HTTP 500 page appears in the browser, check the per-domain Nginx error log
+(`/var/log/nginx/domains/africanrobotplatform.org.error.log`) and the Node
+service logs (`journalctl -u arcp-public -n 100 --no-pager`,
+`journalctl -u arcp-admin -n 100 --no-pager`). A generic 500 page with no
+application output usually means the proxy is missing or the Node service is
+not running.
+
+### 8b. Plain Ubuntu variant with Caddy
 
 Once DNS has propagated, with **Caddy** (automatic HTTPS):
 

@@ -9,6 +9,7 @@ applications Node du dépôt derrière un proxy HTTPS.
 | `systemd/arcp-admin.service` | Service de l'administration (CMS) — `127.0.0.1:3001`, PostgreSQL local + `cms/media` |
 | `Caddyfile` | Proxy inverse + HTTPS **automatique** (recommandé). Remplacer le domaine. |
 | `nginx/arcp.conf.example` | Alternative Nginx (TLS à ajouter via certbot). Remplacer le domaine. |
+| `hestiacp/proxy-public.nginx`, `hestiacp/proxy-admin.nginx` | Directives `location` à coller dans les templates Nginx de HestiaCP (serveurs gérés par HestiaCP : **pas de Caddy**). |
 
 La procédure complète, pas à pas, est dans **[`../DEPLOYMENT.md`](../DEPLOYMENT.md)** :
 base serveur (Node + PostgreSQL) → secrets → `node scripts/deploy.mjs` → services
