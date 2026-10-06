@@ -4,6 +4,12 @@
 self-contained — no other context should be needed to take the code from a
 `.zip` archive to a live, working installation.
 
+**Hosting target:** this project is deployed on a **Linux VPS operated by the
+hosting provider** (UltaHost, running HestiaCP or plain Ubuntu). It is **not**
+deployed on Vercel, Netlify, or any other PaaS, and no third-party platform
+account is required. The archive is the only input: the hosting team builds and
+runs it on their own infrastructure.
+
 ---
 
 ## 1. What you are receiving

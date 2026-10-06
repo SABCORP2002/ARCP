@@ -5,7 +5,7 @@ Le projet contient deux applications Node.js indépendantes, sans WordPress et s
 - le site public Next.js, destiné aux visiteurs ;
 - le site d'administration Payload CMS, situé dans `cms/` et destiné au propriétaire.
 
-L'administration utilise **PostgreSQL**. Les images sont conservées dans `cms/media/` en local, ou sur Vercel Blob / un bucket S3 en production. Le site public communique avec son API côté serveur ; le jeton privé n'est jamais transmis au navigateur.
+L'administration utilise **PostgreSQL**. Les images sont conservées dans `cms/media/` (stockage disque). Le site public communique avec son API côté serveur ; le jeton privé n'est jamais transmis au navigateur.
 
 ## Contenus administrables
 
@@ -68,11 +68,11 @@ npm --prefix cms audit --audit-level=moderate
 - `www.africanrobotplatform.org` : application publique Next.js ;
 - `admin.africanrobotplatform.org` : seconde application Next.js/Payload ;
 - les deux applications utilisent des processus Node distincts ;
-- la base PostgreSQL et les médias (`cms/media/`, Vercel Blob ou S3) doivent être persistants ;
+- la base PostgreSQL et le dossier `cms/media/` doivent être persistants ;
 - HTTPS est obligatoire sur les deux domaines ;
 - l'administration peut tourner sur plusieurs instances (PostgreSQL et le stockage objet sont partagés).
 
-Sauvegarder quotidiennement la base PostgreSQL (`pg_dump`) et le dossier des médias. Un déploiement 100 % Vercel est possible : Vercel Postgres + Vercel Blob, sans service externe (voir `cms/README.md`).
+Sauvegarder quotidiennement la base PostgreSQL (`pg_dump`) et le dossier des médias. Ce projet est destiné à un serveur Linux (VPS) ; il n'est pas déployé sur Vercel.
 
 Consultez `cms/README.md` pour l'exploitation de l'administration.
 
