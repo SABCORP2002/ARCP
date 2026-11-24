@@ -15,10 +15,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
-cms/.env
+# local env files (local dev secrets; *.env.example stays tracked)
+.env*
+!.env*.example
+cms/.env*
+!cms/.env*.example
 cms/.next/
 cms/node_modules/
 cms/media/*
