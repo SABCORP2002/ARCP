@@ -1,23 +1,20 @@
 # African Robot Cooperation Platform (ARCP)
 
-Le projet contient deux applications Node.js indépendantes, sans WordPress et sans conteneur :
+Une seule application Next.js, sans WordPress et sans conteneur : le site public **et** l'administration (`/admin`) tournent dans le même projet, déployé sur Vercel.
 
-- le site public Next.js, destiné aux visiteurs ;
-- le site d'administration Payload CMS, situé dans `cms/` et destiné au propriétaire.
+L'administration utilise **PostgreSQL** (via `lib/db.ts`) et stocke les images/PDF sur **Vercel Blob**. Il n'y a ni service séparé, ni jeton d'API entre deux apps : le site public lit directement la base de données côté serveur.
 
-L'administration utilise **PostgreSQL**. Les images sont conservées dans `cms/media/` (stockage disque). Le site public communique avec son API côté serveur ; le jeton privé n'est jamais transmis au navigateur.
-
-## Contenus administrables
+## Contenus administrables (`/admin`)
 
 - textes et coordonnées du site ;
 - articles, images, dates et sources ;
 - pays membres et statut de vérification ;
 - événements ;
 - partenaires et logos ;
-- messages de contact et demandes d'adhésion ;
-- inscriptions à la newsletter.
+- statistiques annuelles et rapport PDF ;
+- messages de contact, demandes d'adhésion et inscriptions à la newsletter (lecture + statut).
 
-Un contenu publié apparaît sur le site public sous environ 60 secondes. Si l'administration est temporairement indisponible, les contenus locaux de secours maintiennent le site public affichable.
+Un contenu publié apparaît sur le site public sous environ 60 secondes (ISR). Si la base est temporairement indisponible, le site retombe automatiquement sur les contenus locaux de secours (`data/*.ts`).
 
 ## Installation
 
@@ -29,53 +26,37 @@ docker run -d --name arcp-pg -e POSTGRES_PASSWORD=arcp -p 5432:5432 postgres:16
 
 ```powershell
 npm ci
-npm run cms:install
 Copy-Item .env.example .env.local
-Copy-Item cms/.env.example cms/.env
-npm --prefix cms run migrate
 ```
 
-Remplacer ensuite tous les secrets d'exemple. La valeur `CMS_API_TOKEN` doit être strictement identique dans `.env.local` et `cms/.env`.
-
-Initialiser la base et le compte du propriétaire :
+Remplacer les secrets d'exemple dans `.env.local` (`DATABASE_URL`, `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`). Puis initialiser le schéma et le compte propriétaire (idempotent — ne touche jamais à un compte ou un contenu déjà existant) :
 
 ```powershell
-npm run cms:seed
-```
-
-Lancer les deux applications dans deux terminaux :
-
-```powershell
+npm run db:migrate
+npm run db:seed
 npm run dev
-npm run cms:dev
 ```
 
 - site public : `http://localhost:3000` ;
-- administration : `http://localhost:3001/admin`.
+- administration : `http://localhost:3000/admin`.
 
 ## Validation
 
 ```powershell
 npm run check
 npm run build
-npm run cms:build
 npm audit --audit-level=moderate
-npm --prefix cms audit --audit-level=moderate
 ```
 
 ## Déploiement
 
-- `www.africanrobotplatform.org` : application publique Next.js ;
-- `admin.africanrobotplatform.org` : seconde application Next.js/Payload ;
-- les deux applications utilisent des processus Node distincts ;
-- la base PostgreSQL et le dossier `cms/media/` doivent être persistants ;
-- HTTPS est obligatoire sur les deux domaines ;
-- l'administration peut tourner sur plusieurs instances (PostgreSQL et le stockage objet sont partagés).
+Un seul projet Vercel. Avant le premier déploiement :
 
-Sauvegarder quotidiennement la base PostgreSQL (`pg_dump`) et le dossier des médias. Ce projet est destiné à un serveur Linux (VPS) ; il n'est pas déployé sur Vercel.
+1. **Storage → Create Database → Postgres**, connecté au projet — injecte `POSTGRES_URL` automatiquement.
+2. **Storage → Create → Blob**, connecté au projet — injecte `BLOB_READ_WRITE_TOKEN` automatiquement.
+3. Variables d'environnement : `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_SITE_URL`, `FORM_ALLOWED_ORIGINS`.
+4. **Build Command** : `npm run db:migrate && npm run db:seed && npm run build`.
 
-Consultez `cms/README.md` pour l'exploitation de l'administration.
-
-Le document `DEPLOYMENT.md` contient le dossier complet à transmettre à l'hébergeur : variables, construction automatisée, services permanents, domaines, HTTPS, contrôles de santé et sauvegardes.
+Sauvegarder régulièrement la base (`pg_dump`) — Vercel Postgres/Neon proposent aussi des sauvegardes automatiques. Les médias sur Vercel Blob sont déjà redondés côté fournisseur.
 
 Copyright 2024–2026 African Robot Cooperation Platform. Tous droits réservés.

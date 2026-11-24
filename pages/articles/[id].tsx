@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 
 import { Article, articleCategoryLabels, formatArticleDate } from "@/data/articles";
-import { contentImageSrc, getArticles, getSiteSettings } from "@/lib/cms";
+import { getArticles, getSiteSettings } from "@/lib/cms";
+import { contentImageSrc } from "@/lib/content-image";
 import type { SiteSettings } from "@/data/site";
 
 type ArticlePageProps = {

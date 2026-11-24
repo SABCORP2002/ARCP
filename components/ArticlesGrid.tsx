@@ -10,7 +10,7 @@ import {
   articlesData,
   formatArticleDate,
 } from "@/data/articles";
-import { contentImageSrc } from "@/lib/cms";
+import { contentImageSrc } from "@/lib/content-image";
 
 export function ArticlesGrid({ articles = articlesData }: { articles?: Article[] }) {
   const { t, lang } = useLanguage();

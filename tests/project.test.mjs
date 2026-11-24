@@ -25,7 +25,7 @@ function collectTextFiles(relativePath) {
 }
 
 test("content uses the canonical domain and no placeholder links", () => {
-  const roots = ["cms", "components", "context", "data", "lib", "pages", "scripts"];
+  const roots = ["components", "context", "data", "lib", "pages", "scripts"];
   const files = ["README.md", ...roots.flatMap(collectTextFiles)];
 
   for (const file of files) {
@@ -82,65 +82,90 @@ test("public assets stay within the deployment size budget", () => {
   assert.ok(total < 8 * 1024 * 1024, `public assets total ${Math.round(total / 1024)} KB`);
 });
 
-test("separate code-based CMS architecture is present without WordPress or containers", () => {
-  const cmsPackage = JSON.parse(read("cms/package.json"));
-  const config = read("cms/src/payload.config.ts");
-  const access = read("cms/src/access.ts");
+test("the admin is integrated into this app — no separate CMS, no VPS tooling, no WordPress", () => {
   const publicEnvironment = read(".env.example");
-  const seed = JSON.parse(read("cms/seed.json"));
+  const dbConnection = read("lib/db-connection.mjs");
+  const adminAuth = read("lib/adminAuth.ts");
 
-  assert.equal(cmsPackage.dependencies.payload, "3.88.0");
-  assert.equal(cmsPackage.dependencies["@payloadcms/db-postgres"], "3.88.0");
-  assert.match(config, /postgresAdapter/);
-  assert.match(config, /graphQL: \{ disable: true \}/);
-  assert.match(access, /timingSafeEqual/);
-  assert.match(publicEnvironment, /CMS_API_TOKEN=/);
+  // Was a separate Payload app + VPS handoff before; now one Next.js app on Vercel.
+  for (const removed of [
+    "cms",
+    "deploy",
+    "DEPLOYMENT.md",
+    "DEPLOYMENT.en.md",
+    "wordpress-import",
+    "wordpress-theme",
+    "scripts/deployment-preflight.mjs",
+    "scripts/deploy.mjs",
+    "scripts/push-backoffice.mjs",
+  ]) {
+    assert.ok(!fs.existsSync(path.join(root, removed)), `${removed} should no longer exist`);
+  }
+
+  assert.doesNotMatch(publicEnvironment, /\bCMS_API_TOKEN\b/, ".env.example should not reference a separate CMS token");
   assert.doesNotMatch(publicEnvironment, /NEXT_PUBLIC_CMS_API_TOKEN/);
-  assert.equal(seed.members.length, 20);
-  assert.equal(seed.articles.length, 4);
-  assert.equal(seed.members.filter((member) => member.member_status === "verified").length, 1);
-  assert.ok(!fs.existsSync(path.join(root, "wordpress-import")));
-  assert.ok(!fs.existsSync(path.join(root, "cms", "docker-compose.yml")));
-  assert.ok(!fs.existsSync(path.join(root, "cms", "bootstrap.mjs")));
+  assert.match(publicEnvironment, /DATABASE_URL=/);
+  assert.match(publicEnvironment, /SESSION_SECRET=/);
+
+  // Managed Postgres TLS handling, proven against Supabase/Neon/Vercel Postgres.
+  assert.match(dbConnection, /sslmode/);
+  assert.match(dbConnection, /rejectUnauthorized/);
+
+  // Admin auth: hashed passwords, constant-time cookie signature check.
+  assert.match(adminAuth, /bcrypt/);
+  assert.match(adminAuth, /timingSafeEqual/);
+  assert.match(adminAuth, /SESSION_SECRET/);
 });
 
-test("public forms write only through server-side CMS routes", () => {
+test("the initial seed matches the previous content exactly", () => {
+  const seed = read("scripts/seed-data.mjs");
+  assert.equal((seed.match(/slug:\s*"[a-z0-9-]+"/g) || []).length, 20, "expected 20 members");
+  assert.equal((seed.match(/content_en:/g) || []).length, 4, "expected 4 articles");
+  assert.equal((seed.match(/member_status:\s*"verified"/g) || []).length, 1, "expected 1 verified member");
+  assert.equal((seed.match(/starts_at:/g) || []).length, 2, "expected 2 events");
+  assert.equal((seed.match(/(?<![a-z_])name:\s*"[^"]+"/g) || []).length, 6, "expected 6 partners");
+});
+
+test("the integrated admin schema and auth routes exist", () => {
+  const schema = read("db/migrations/0001_init.sql");
+  for (const table of [
+    "admin_users",
+    "articles",
+    "members",
+    "events",
+    "partners",
+    "site_settings",
+    "statistics",
+    "statistics_categories",
+    "contact_requests",
+    "membership_requests",
+    "newsletter_subscriptions",
+  ]) {
+    assert.match(schema, new RegExp(`CREATE TABLE IF NOT EXISTS ${table}\\b`), `missing table: ${table}`);
+  }
+
+  for (const route of ["pages/api/admin/login.ts", "pages/api/admin/logout.ts", "pages/api/admin/change-password.ts"]) {
+    assert.ok(fs.existsSync(path.join(root, route)), `missing route: ${route}`);
+  }
+
+  const withAdminPage = read("lib/withAdminPage.ts");
+  assert.match(withAdminPage, /\/admin\/login/);
+
+  const health = read("pages/api/health.ts");
+  assert.match(health, /database/);
+});
+
+test("public forms write only an explicit, hardcoded set of fields", () => {
   const cmsServer = read("lib/cms-server.ts");
   const contact = read("pages/api/forms/contact.ts");
   const join = read("pages/api/forms/join.ts");
   const newsletter = read("pages/api/forms/newsletter.ts");
   const guard = read("lib/form-api.ts");
 
-  assert.match(cmsServer, /process\.env\.CMS_API_TOKEN/);
-  assert.doesNotMatch(cmsServer, /NEXT_PUBLIC_CMS_API_TOKEN/);
+  assert.match(cmsServer, /ALLOWED_TABLES/);
   assert.match(contact, /contact_requests/);
   assert.match(join, /membership_requests/);
   assert.match(newsletter, /newsletter_subscriptions/);
   assert.match(guard, /FORM_ALLOWED_ORIGINS/);
   assert.doesNotMatch(`${contact}\n${join}\n${newsletter}`, /request_status|created_at/);
-});
-
-test("hosting handoff includes migrations, health checks and two private services", () => {
-  const deployment = read("DEPLOYMENT.md");
-  const preflight = read("scripts/deployment-preflight.mjs");
-  const deployScript = read("scripts/deploy.mjs");
-  const publicService = read("deploy/systemd/arcp-public.service");
-  const adminService = read("deploy/systemd/arcp-admin.service");
-  const caddy = read("deploy/Caddyfile");
-  const publicHealth = read("pages/api/health.ts");
-  const cmsHealth = read("cms/src/app/(payload)/health/route.ts");
-  const migrations = fs.readdirSync(path.join(root, "cms", "src", "migrations"));
-
-  assert.match(deployment, /node scripts\/deploy\.mjs/);
-  assert.match(preflight, /CMS_API_TOKEN must be identical/);
-  assert.match(deployScript, /"migrate"/);
-  assert.match(publicService, /127\.0\.0\.1.*3000/);
-  assert.match(adminService, /127\.0\.0\.1.*3001/);
-  assert.match(caddy, /admin\.africanrobotplatform\.org/);
-  assert.match(publicHealth, /cms === "ok"/);
-  assert.match(cmsHealth, /arcp-administration/);
-  assert.ok(migrations.some((file) => /_initial_postgres\.ts$/.test(file)));
-  assert.match(read("cms/src/migrations/index.ts"), /export const migrations = \[/);
-  assert.ok(!fs.existsSync(path.join(root, ".env.local")));
-  assert.ok(!fs.existsSync(path.join(root, "cms", ".env")));
 });

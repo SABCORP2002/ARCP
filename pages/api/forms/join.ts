@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createCmsItem } from "@/lib/cms-server";
+import { createRequest } from "@/lib/cms-server";
 import { formValue, guardPublicForm, validEmail } from "@/lib/form-api";
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
@@ -25,7 +25,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     return;
   }
   try {
-    await createCmsItem("membership_requests", item);
+    await createRequest("membership_requests", item);
     response.status(201).json({ ok: true });
   } catch {
     response.status(503).json({ error: "Form service unavailable" });
